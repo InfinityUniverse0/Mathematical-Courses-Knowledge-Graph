@@ -10,7 +10,7 @@ from os.path import join
 import pandas as pd
 from copy import deepcopy
 
-class CourseGraph():
+class CourseGraph:
     '''
     高等教育数学课程图谱
     '''
