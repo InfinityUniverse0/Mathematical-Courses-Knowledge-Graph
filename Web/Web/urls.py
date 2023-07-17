@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from project.views import page_not_found, server_error, index_page
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("index", index_page),
 ]
+
+handler404 = page_not_found
+handler500 = server_error
