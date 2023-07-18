@@ -22,13 +22,11 @@ def index_page(request):
 def chat(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
-
         try:
             data = json.loads(body)
             message = data.get('message')
         except json.JSONDecodeError:
             return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
-
         try:
             response = openai.ChatCompletion.create(
                 model='gpt-3.5-turbo',
@@ -40,8 +38,6 @@ def chat(request):
             completion = response['choices'][0]['message']['content']
         except Exception as e:
             completion = 'ERROR: ' + str(e)
-
         return JsonResponse({'completion': completion})
-
     return render(request, 'chat.html')
 
