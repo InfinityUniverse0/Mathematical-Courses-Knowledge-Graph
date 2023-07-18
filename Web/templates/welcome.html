@@ -2,13 +2,75 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta maximum-scale=1.0, user-scalable=0>
     <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 20px;
+            color: #ccc;
+            margin: 10px 0;
+        }
+
+        .welcome-box {
+            padding: 40px;
+            border-radius: 20px;
+            background-color: #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 20px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome测试</h1>
-    <p>这里是欢迎页面</p>
-    <p>Thank you for registering.</p>
+    <div class="welcome-box">
+        <img class="logo" src="/static/img/logo.ico" alt="Logo">
+        <h1>Welcome测试</h1>
+        <p>这里是欢迎页面</p>
+        <p>Thank you for registering.</p>
+        <a class="btn" href="#">Get Started</a>
+    </div>
 </body>
 
 </html>

@@ -11,6 +11,7 @@ from .backend import *
 
 # 导入neo4j_db/course_graph.py 中的 CourseGraph类
 import sys
+
 sys.path.append("..")
 from neo4j_db.course_graph import CourseGraph
 
@@ -19,7 +20,9 @@ from django.conf import settings
 from py2neo import Graph, Node, Relationship
 import openai
 import json
+
 openai.api_key = settings.OPENAI_API_KEY
+
 
 # Create your views here.
 
@@ -27,17 +30,21 @@ openai.api_key = settings.OPENAI_API_KEY
 def page_not_found(request, exception):
     return render(request, '404.html')
 
+
 # 500
 def server_error(request):
     return render(request, '500.html')
+
 
 # 欢迎页面
 def welcome_page(request):
     return render(request, 'welcome.html')
 
+
 # 主页
 def index_page(request):
     return render(request, 'index.html')
+
 
 # 聊天页面
 # - 暂时存放在此,以后可能会迁移到其他应用下
