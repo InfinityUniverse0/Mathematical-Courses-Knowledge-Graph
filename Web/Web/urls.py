@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.urls import re_path as url
+from django.views.static import serve
 from project.views import page_not_found, server_error, index_page, chat
 
 urlpatterns = [
+    url(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}, name='static'),
     path("admin/", admin.site.urls),
     path("index", index_page),
     path('chat', chat)
