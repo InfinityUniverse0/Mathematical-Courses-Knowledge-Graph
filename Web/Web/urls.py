@@ -19,17 +19,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.urls import re_path as url
 from django.views.static import serve
-from Base.views import page_not_found, server_error, welcome_page, index_page, chat
+from Base.views import page_not_found, server_error, welcome_page
 
 urlpatterns = [
     url(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}, name='static'),
     path("admin/", admin.site.urls),
     path("", welcome_page),
-    # path("base/", include("Base.urls")),
-    # path("kg/", include("KG.urls")),
-    # path("qa/", include("QA.urls")),
-    path("index/", index_page),
-    path('chat/', chat)
+    path("base/", include("Base.urls")),
+    path("kg/", include("KG.urls")),
+    path("qa/", include("QA.urls")),
 ]
 
 handler404 = page_not_found
