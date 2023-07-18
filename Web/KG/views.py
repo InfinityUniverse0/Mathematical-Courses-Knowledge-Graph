@@ -46,4 +46,5 @@ def query_course(request):
 
 def query_all(request):
     if request.method == 'POST':
+        pass
 
