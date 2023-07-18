@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>高等数学教育课程体系</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script> <!-- 引入 D3.js -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #333;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+    }
+
+    .left-section {
+      background-color: #444;
+      padding: 20px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-gap: 20px;
+    }
+
+    .right-section {
+      background-color: #444;
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="radio"] {
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #999;
+      font-size: 16px;
+      outline: none;
+      background-color: #555;
+      color: #fff;
+    }
+
+    .form-group input[type="radio"] {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button-group button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      outline: none;
+      transition: background-color 0.3s;
+    }
+
+    .button-group button:hover {
+      background-color: #45a049;
+    }
+
+    .content-box {
+      background-color: #555;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .graph-container {
+      height: 400px; /* 设置图表容器的高度 */
+    }
+
+    .slider {
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+      position: relative;
+    }
+
+    .slider input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider .slider-track {
+      background-color: #ccc;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 8px;
+      border-radius: 4px;
+      transition: .4s;
+    }
+
+    .slider .slider-thumb {
+      background-color: white;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    .slider input:checked + .slider-track {
+      background-color: #4CAF50;
+    }
+
+    .slider input:checked + .slider-track .slider-thumb {
+      transform: translate(100%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center; margin-top: 20px; color: #fff;">高等数学教育课程体系</h1>
+
+  <div class="container">
+    <div class="left-section">
+      <div>
+        <h2 class="section-title">实体查询</h2>
+        <div class="form-group">
+          <label for="courseName">查询课程:</label>
+          <input type="text" id="courseName" name="courseName">
+        </div>
+      </div>
+
+      <div class="content-box graph-container" id="graphContainer">
+        <!-- 图表容器 -->
+      </div>
+    </div>
+
+    <div class="right-section">
+      <h2 class="section-title">问答系统</h2>
+      <div class="form-group">
+        <label for="questionInput">问题:</label>
+        <input type="text" id="questionInput">
+      </div>
+      <div class="button-group">
+        <button onclick="answerQuestion()">回答</button>
+        <label class="slider">
+          <input type="checkbox" id="modeSwitch" onchange="switchMode()" checked>
+          <span class="slider-track"></span>
+          <span class="slider-thumb"></span>
+        </label>
+      </div>
+
+      <div class="content-box" id="answerContainer">
+        <!-- 问答结果将显示在这里 -->
+      </div>
+    </div>
+  </div>
+
+<!-- JavaScript代码 -->
+<script>
+    // 实体查询表单提交处理
+    const courseQueryForm = document.getElementById('courseQueryForm');
+    const graphContainer = document.getElementById('graphContainer');
+    courseQueryForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // 阻止表单提交
+        const courseName = document.getElementById('courseName').value;
+        // 发起查询请求并生成图表
+        const graphData = queryGraphData(courseName); // 这里需要替换为实际的查询和处理代码
+        renderGraph(graphData);
+    });
+
+    // 学习路线规划按钮点击处理
+    function generateLearningPlan() {
+        const learningGoal = document.querySelector('input[name="learningGoal"]:checked').value;
+        // 发起学习路线规划请求并更新学习路线
+        const learningPlanData = generatePlanData(learningGoal); // 这里需要替换为实际的规划和处理代码
+        renderLearningPlan(learningPlanData);
+    }
+
+    // 问答系统
+    let mode = '推荐'; // 初始模式为推荐
+
+    function answerQuestion() {
+        const question = document.getElementById('questionInput').value;
+        let answer;
+        if (mode === '推荐') {
+            answer = recommendAnswer(question); // 这里需要替换为实际的推荐算法和处理代码
+        } else if (mode === '智能') {
+            answer = intelligentAnswer(question); // 这里需要替换为实际的智能问答算法和处理代码
+        }
+        // 在 answerContainer 中显示答案或推荐结果
+        document.getElementById('answerContainer').textContent = answer;
+    }
+
+    function switchMode() {
+        if (mode === '推荐') {
+            mode = '智能';
+        } else if (mode === '智能') {
+            mode = '推荐';
+        }
+        // 切换模式后清空答案容器中的内容
+        document.getElementById('answerContainer').textContent = '';
+    }
+
+    // 以下为示例函数，需要根据实际情况进行替换和实现
+    function queryGraphData(courseName) {
+        // 实现查询 Neo4j 数据库并获取图数据的逻辑
+        // 返回图数据对象，用于绘制图表
+    }
+
+    function renderGraph(graphData) {
+        // 使用 D3.js 绘制图表
+        // 使用 graphData 对象生成图表，将其显示在 graphContainer 容器中
+    }
+
+    function generatePlanData(learningGoal) {
+        // 实现学习路线规划的逻辑
+        // 返回学习路线数据对象，用于显示学习路线
+    }
+
+    function renderLearningPlan(learningPlanData) {
+        // 将学习路线数据对象显示在 learningPlan 容器中
+    }
+
+    function recommendAnswer(question) {
+        // 相关推荐的问答逻辑
+        // 返回相关推荐的答案或建议
+    }
+
+    function intelligentAnswer(question) {
+        // 智能 AI 问答的逻辑
+        // 返回智能 AI 的答案
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/*主要是按钮部分以及页面信息框的样式*/
+.container {
+    display: flex;
+    flex-direction: column;
+}
+.info-bar {
+    /*信息框的背景颜色*/
+    background-color: #172d5b;
+    font-size: 25px;
+    color: #FFC125;
+    padding: 15px;
+    border-bottom: 1px solid #fff;
+    height: 35px;
+    width: 100%;
+}
+.demo{
+    font-size: 25px;
+    color: #4592fe;
+}
+.button-bar{
+    list-style-type: none;
+    margin-top: 66px;
+    padding: 0;
+    width: 200px;
+    background-color: #444e80;
+    height: 100%; /* 全高 */
+    position: fixed; /* 使它产生粘性，即使在滚动时 */
+    overflow: auto; /* 如果侧栏的内容太多，则启用滚动条 */
+}
+.button-bar li{
+    /*button的样式*/
+    border-bottom: 1px solid #fff;
+    padding: 15px 20px;
+    font-size: 18px;
+    width: 200px;
+    background-color: #444e80;
+    color: #FFC125;
+    cursor: pointer;
+    text-align: left;
+}
+.button-bar li:hover {
+    background-color: #273062;
+}
