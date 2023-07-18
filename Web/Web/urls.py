@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from project.views import page_not_found, server_error, index_page
+from project.views import page_not_found, server_error, index_page, chat
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("index", index_page),
+    path('chat', chat)
 ]
 
 handler404 = page_not_found
