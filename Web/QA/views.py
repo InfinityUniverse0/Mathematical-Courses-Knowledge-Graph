@@ -5,13 +5,19 @@
 '''
 
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+
 
 # 导入backend.py中的所有函数
 from .backend import *
 
-# 导入neo4j_db/course_graph.py 中的 CourseGraph类
-import sys
-sys.path.append("..")
-from neo4j_db.course_graph import CourseGraph
 
 # Create your views here.
+def QA_normal(request):
+    pass
+
+
+
+def QA_advanced(request):
+    pass
