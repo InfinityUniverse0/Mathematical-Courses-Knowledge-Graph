@@ -222,6 +222,8 @@ if __name__ == '__main__':
     mygraph = CourseGraph()
     mygraph.initial()
     print('Init Done!')
+
+    # 查询所有边
     # cypher = "Match p = ()-[]-() Return p"
     # cur = mygraph.exec_cypher(cypher)
     # for iten in cur:

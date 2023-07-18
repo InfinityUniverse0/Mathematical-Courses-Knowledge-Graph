@@ -63,22 +63,22 @@
 
 ## 项目结构
 
-```shell
+```bash
 .
 ├── README.md
-├── neo4j // neo4j图数据库
+├── neo4j_db // neo4j图数据库
 │   ├── data // 数据文件
 │   │   ├── 课程模块.csv
 │   │   ├── 课程.csv
 │   │   ├── 知识模块.csv
 │   │   ├── 知识要点.csv
 │   │   └── 数学人物.csv
-│   └── course_graph.py // 生成并初始化图数据库
+│   ├── __init__.py
+│   └── course_graph.py // 生成并初始化图数据库, 并用于后续操作数据库
 └── Web // Django Web项目
     ├── manage.py
     ├── Web // Django项目
     │   ├── __init__.py
-    │   ├── __pycache__
     │   ├── asgi.py
     │   ├── settings.py
     │   ├── urls.py
@@ -89,7 +89,43 @@
     │   ├── img
     │   └── js
     ├── templates // 模板文件
-    │   └── index.html
+    │   ├── index.html
+    │   ├── 404.html
+    │   └── 500.html
+    ├── Base // Django应用: 基础应用，用于处理一些基础的请求，包括欢迎页面、404、500等
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── migrations
+    │   ├── models.py
+    │   ├── tests.py
+    │   ├── urls.py // 路由
+    │   ├── backend.py // 复杂的后端处理函数
+    │   └── views.py // 视图函数
+    ├── KG // Django应用: KnowledgeGraph，用于处理知识图谱相关的基本请求，包括基于知识图谱的实体查询、关系查询等
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── migrations
+    │   ├── models.py
+    │   ├── tests.py
+    │   ├── urls.py // 路由
+    │   ├── backend.py // 复杂的后端处理函数
+    │   └── views.py // 视图函数
+    └── QA // Django应用: Question Answering System，用于处理问答系统相关的基本请求
+        ├── __init__.py
+        ├── __pycache__
+        ├── admin.py
+        ├── apps.py
+        ├── migrations
+        ├── models.py
+        ├── tests.py
+        ├── urls.py // 路由
+        ├── backend.py // 复杂的后端处理函数
+        └── views.py // 视图函数
+```
+
+<!-- 
     └── webapp // Django应用：根据实际需要自行创建对应app应用文件，使用`python manage.py startapp webapp`命令创建(尚未创建，仅作示例)
         ├── __init__.py
         ├── __pycache__
@@ -99,5 +135,5 @@
         ├── models.py
         ├── tests.py
         ├── urls.py
-        └── views.py
-```
+        └── views.py 
+-->
