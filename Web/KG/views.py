@@ -21,8 +21,8 @@ def query_course(request):
                  WHERE n.name CONTAINS {} 
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_dict, pnt = nodes_to_list(cursor), 1
-        for node in node_dict:
+        node_list, pnt = nodes_to_list(cursor), 1
+        for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
                     MATCH (n:课程)
@@ -33,12 +33,12 @@ def query_course(request):
                     RETURN p
                       '''.format(node['name'])
             cursor = graph.run(cypher).data()
-            path_dict, pnt = paths_to_list(cursor, pnt)
+            path_list, pnt = paths_to_list(cursor, pnt)
 
         # 构建返回的数据字典
         response_data = {
-            'nodes': node_dict,
-            'edges': path_dict
+            'nodes': node_list,
+            'edges': path_list
         }
         return JsonResponse(response_data)
     return render(request, 'query.html')
