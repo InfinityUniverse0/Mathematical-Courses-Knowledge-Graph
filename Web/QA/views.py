@@ -11,13 +11,19 @@ from django.conf import settings
 
 # 导入backend.py中的所有函数
 from .backend import *
+import jieba
 
 
 # Create your views here.
 def QA_normal(request):
-    pass
+    if request.method == 'POST':
+        question = request.POST.get('question').strip()
+        seg_list = jieba.cut(question)
+    return render(request, 'QA.html')
 
 
 
 def QA_advanced(request):
-    pass
+    if request.method == 'POST':
+        question = request.POST.get('question').strip()
+    return render(request, 'QA.html')
