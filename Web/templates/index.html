@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
     <title>数学知识图谱展示</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/option.css">
     <style>
         /* CSS样式 */
-        @import "../static/css/option.css";/* 用于功能选择菜单的样式构建 */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
         }
+
         body {
             background-color: #E8E8E8;
             font-family: Arial, sans-serif;
@@ -22,42 +23,58 @@
             background-size: 100% 100%;
             overflow: hidden;
         }
+
         #graphContainer {
             border-radius: 5px;
             width: 800px;
             height: 650px;
             margin: 16px auto;
             border: 0px solid #ccc;
-            background-color: rgba(255,255,255,0.4);
-            position: absolute;right: 20px;top: 120px;
-            text-align:center;
+            background-color: rgba(255, 255, 255, 0.4);
+            position: absolute;
+            right: 20px;
+            top: 120px;
+            text-align: center;
         }
+
         /*调整输入框的样式*/
-        #entityRecognition{
+        #entityRecognition {
             margin: 10px auto;
             width: 800px;
             /*text-align: left;*/
-            position: absolute;left:20px;top: 50px;
+            position: absolute;
+            left: 20px;
+            top: 50px;
         }
+
         /*调整输入框的样式*/
-        #relationExtraction{
+        #relationExtraction {
             margin: 10px auto;
             width: 800px;
             /*text-align: left;*/
-            position: absolute;left:20px;top: 100px;
+            position: absolute;
+            left: 20px;
+            top: 100px;
         }
+
         /*调整输入框的样式*/
-        #ask{
+        #ask {
             margin: 10px auto;
             width: 800px;
             /*text-align: left;*/
-            position: absolute;left:20px;top: 150px;
+            position: absolute;
+            left: 20px;
+            top: 150px;
         }
+
         /*学习路线规划按钮*/
-        #studyRoute{
+        #studyRoute {
             margin: 10px auto;
-            position: absolute;left:170px;top: 200px;
+            position: absolute;
+            left: 170px;
+            top: 200px;
         }
+
         input[type="text"] {
             width: 400px;
             padding: 8px;
@@ -66,15 +83,15 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="info-bar">数学知识图谱<span class="demo"> DEMO</span></div>
-        <ul class="button-bar">
-            <li onclick=recognizeEntities()>实体识别</li>
-            <li onclick=extractRelations()>关系抽取</li>
-            <li onclick=recognizeEntities()>数学猫娘问答</li>
-            <li id="askButton">测试知识图谱</li>
-        </ul>
-    </div>
+<div class="container">
+    <div class="info-bar">数学知识图谱<span class="demo"> DEMO</span></div>
+    <ul class="button-bar">
+        <li onclick=recognizeEntities()>实体识别</li>
+        <li onclick=extractRelations()>关系抽取</li>
+        <li onclick=recognizeEntities()>数学猫娘问答</li>
+        <li id="askButton">测试知识图谱</li>
+    </ul>
+</div>
 <!--    <div id="entityRecognition">-->
 <!--        <input type="text" id="entityInput" placeholder="输入文本进行实体识别">-->
 <!--        <button onclick=recognizeEntities()>实体识别</button>-->
@@ -94,24 +111,25 @@
 <!--        <button onclick=recognizeEntities()>来规划您的学习路线吧</button>-->
 <!--    </div>-->
 
-    <div id="graphContainer">
-        知识图谱
-        <!--知识图谱展示部分-->
-        <svg width="800" height="600"></svg>
-    </div>
+<div id="graphContainer">
+    知识图谱
+    <!--知识图谱展示部分-->
+    <svg width="800" height="600"></svg>
+</div>
 <!--    用于显示结点详细内容的框-->
-    <div style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: azure;text-align:center;">
-        这里是展示的框
-        <span id="xxx"></span>
-    </div>-->
+<div style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: azure;text-align:center;">
+    这里是展示的框
+    <span id="xxx"></span>
+</div>
+-->
 
 <!--<script-->
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script type="text/javascript">
-    document.getElementById("askButton").addEventListener("click", function() {
+    document.getElementById("askButton").addEventListener("click", function () {
 
 
-        let marge = { top: 0, bottom: 0, left: 0, right: 0 }
+        let marge = {top: 0, bottom: 0, left: 0, right: 0}
         let svg = d3.select('svg')
         let width = svg.attr('width')
         let height = svg.attr('height')
@@ -129,30 +147,30 @@
         // 准备数据
         // 节点集
         let nodes = [
-            { id: 12, name: '湖南邵阳' },
-            { id: 2, name: '山东泰安' },
-            { id: 3, name: '广东阳江不知道怎么回' },
-            { id: 4, name: '山西太原' },
-            { id: 5, name: '亮' },
-            { id: 6, name: '丽' },
-            { id: 7, name: '雪' },
-            { id: 8, name: '小明' },
-            { id: 9, name: '组长' }
+            {id: 12, name: '湖南邵阳'},
+            {id: 2, name: '山东泰安'},
+            {id: 3, name: '广东阳江不知道怎么回'},
+            {id: 4, name: '山西太原'},
+            {id: 5, name: '亮'},
+            {id: 6, name: '丽'},
+            {id: 7, name: '雪'},
+            {id: 8, name: '小明'},
+            {id: 9, name: '组长'}
         ]
         // 边集
         let tempEdges = [
-            { id: 1, source: 12, target: 5, relation: '籍贯', value: 1.3 },
-            { id: 2, source: 5, target: 6, relation: '舍友', value: 1 },
-            { id: 3, source: 5, target: 7, relation: '舍友', value: 1 },
-            { id: 4, source: 5, target: 8, relation: '舍友', value: 1 },
-            { id: 5, source: 2, target: 7, relation: '籍贯', value: 2 },
-            { id: 6, source: 3, target: 6, relation: '籍贯', value: 0.9 },
-            { id: 7, source: 4, target: 8, relation: '籍贯', value: 1 },
-            { id: 8, source: 6, target: 7, relation: '同学', value: 1.6 },
-            { id: 9, source: 7, target: 8, relation: '朋友', value: 0.7 },
-            { id: 10, source: 7, target: 9, relation: '职责', value: 2 },
-            { id: 11, source: 9, target: 7, relation: '人物', value: 2 },
-            { id: 12, source: 9, target: 7, relation: '哈哈哈', value: 2 }
+            {id: 1, source: 12, target: 5, relation: '籍贯', value: 1.3},
+            {id: 2, source: 5, target: 6, relation: '舍友', value: 1},
+            {id: 3, source: 5, target: 7, relation: '舍友', value: 1},
+            {id: 4, source: 5, target: 8, relation: '舍友', value: 1},
+            {id: 5, source: 2, target: 7, relation: '籍贯', value: 2},
+            {id: 6, source: 3, target: 6, relation: '籍贯', value: 0.9},
+            {id: 7, source: 4, target: 8, relation: '籍贯', value: 1},
+            {id: 8, source: 6, target: 7, relation: '同学', value: 1.6},
+            {id: 9, source: 7, target: 8, relation: '朋友', value: 0.7},
+            {id: 10, source: 7, target: 9, relation: '职责', value: 2},
+            {id: 11, source: 9, target: 7, relation: '人物', value: 2},
+            {id: 12, source: 9, target: 7, relation: '哈哈哈', value: 2}
         ]
         nodes.forEach(item => {
 
@@ -207,7 +225,9 @@
             .enter()
             .append('path')
             .attr('d', link => genLinkPath(link)) // 遍历所有数据。d表示当前遍历到的数据，返回绘制的贝塞尔曲线
-            .attr('id', (d, i) => { return 'edgepath' + d.id }) // 设置id，用于连线文字
+            .attr('id', (d, i) => {
+                return 'edgepath' + d.id
+            }) // 设置id，用于连线文字
             .style('stroke', '#000') // 线条颜色
             .style('stroke-width', 2) // 粗细
             .attr('class', 'lines')
@@ -277,6 +297,7 @@
             }
         }, true)
         forceSimulation.on('tick', ticked)
+
         // showMyList()
         function toggleLineText(currNode, isHover) {
             if (isHover) {
@@ -293,6 +314,7 @@
                 })
             }
         }
+
         function toggleLine(linkLine, currNode, isHover) {
             if (isHover) {
                 // 加重连线样式
@@ -307,11 +329,12 @@
                     .classed('link-active', false)
             }
         }
+
         //展示自己的List
         function showMyList() {
-            var e = { id: 10, name: "河北" };
-            var h = { id: 11, name: "河南" };
-            var f = { id: 13, source: 9, target: 10, relation: '222', value: 2 };
+            var e = {id: 10, name: "河北"};
+            var h = {id: 11, name: "河南"};
+            var f = {id: 13, source: 9, target: 10, relation: '222', value: 2};
             nodes.push(e);
             nodes.push(h);
             tempEdges.push(f);
@@ -321,13 +344,16 @@
             edges = genLinks(tempEdges)
             updateData()
         }
+
         //用于更新当前数据
         function updateData() {
             links = links
                 .data(edges, function (d) {
                 })
                 .join("path")
-                .attr('id', (d, i) => { return 'edgepath' + d.id }) // 设置id，用于连线文字
+                .attr('id', (d, i) => {
+                    return 'edgepath' + d.id
+                }) // 设置id，用于连线文字
                 .style('stroke', '#000') // 颜色
                 .style('stroke-width', 2) // 粗细
                 .attr('class', 'lines')
@@ -389,7 +415,7 @@
                 .attr('dy', 10)
                 .attr('text-anchor', 'middle')
                 .style('font-size', 12)
-                .attr('x', function ({ name }) {
+                .attr('x', function ({name}) {
                     return textBreaking(d3.select(this), name)
                 })
             gs.append('title')
@@ -400,6 +426,7 @@
             forceSimulation.force("link").links(edges);
             forceSimulation.alpha(0.8).restart();
         }
+
         function getLineTextAngle(d, bbox) {
             if (d.target.x < d.source.x) {
                 const {
@@ -415,6 +442,7 @@
                 return 'rotate(0)';
             }
         }
+
         function toggleNode(nodeCircle, currNode, isHover) {
             if (isHover) {
                 // 提升节点层级
@@ -430,9 +458,11 @@
             }
 
         }
+
         function removeSingle() {
             d3.select('.singleCircle').remove()
         }
+
         function toggleCircle(current, d) {
             var currentD = d
             if (d.clickFlag) {
@@ -462,7 +492,7 @@
             }
             var width = 300,
                 height = 300,
-                margin = { "left": 30, "top": 30, "right": 30, "bottom": 30 },
+                margin = {"left": 30, "top": 30, "right": 30, "bottom": 30},
                 svg_width = width + margin.left + margin.right,
                 svg_height = height + margin.top + margin.bottom,
                 font_size = 15;
@@ -581,6 +611,7 @@
                     d3.event.stopPropagation()
                 }, true)
         }
+
         //删除当前节点下一级没有其他关系的节点
         function deleteNextNodes(curr) {
             document.getElementById('xxx').innerText = '';
@@ -650,6 +681,7 @@
             links.style('opacity', 1)
                 .classed('link-active', false);
         }
+
         //删除当前及下一级没有其他关系的节点
         function deleteNode(curr) {
             document.getElementById('xxx').innerText = '';
@@ -706,12 +738,11 @@
             links.style('opacity', 1)
                 .classed('link-active', false);
         }
+
         // 关联节点去重重组
         function uniqObjInArray(objarray) {
             let len = objarray.length;
-            let tempJson = {
-
-            };
+            let tempJson = {};
             let res = [];
             for (let i = 0; i < len; i++) {
                 //取出每一个对象
@@ -723,15 +754,18 @@
             }
             return res;
         }
+
         function isLinkLine(node, link) {
             return link.source.id === node.id
         }
+
         function isLinkNode(currNode, node) {
             if (currNode.id === node.id) {
                 return true;
             }
             return linkMap[currNode.id + '-' + node.id] || linkMap[node.id + '-' + currNode.id];
         }
+
         function largerNode(nodes, currNode, isHover) {
             if (isHover) {
                 gs
@@ -743,9 +777,11 @@
                     .style('stroke-width', 1)
             }
         }
+
         function isNode(node, cNode) {
             return true
         }
+
         // 绘制节点
         gs.append('circle')
             .attr('r', 35)
@@ -764,13 +800,14 @@
             .attr('dy', 10)
             .attr('text-anchor', 'middle')
             .style('font-size', 12)
-            .attr('x', function ({ name }) {
+            .attr('x', function ({name}) {
                 return textBreaking(d3.select(this), name)
             })
         gs.append('title')
             .text((node) => {
                 return node.name
             })
+
         function genLinkMap(relations) {
             const hash = {};
             relations.map(function ({
@@ -789,6 +826,7 @@
             });
             return hash;
         }
+
         function genLinks(relations) {
             const indexHash = {};
             return relations.map(function ({
@@ -817,6 +855,7 @@
                 }
             })
         }
+
         // 生成关系连线路径
         function genLinkPath(link) {
             const count = link.count;
@@ -827,6 +866,7 @@
             let ty = link.target.y;
             return 'M' + sx + ',' + sy + ' L' + tx + ',' + ty;
         }
+
         function genNodesMap(nodes) {
             const hash = {};
             nodes.map(function ({
@@ -840,6 +880,7 @@
             });
             return hash;
         }
+
         // 处理节点文字换行
         function textBreaking(d3text, text) {
             const len = text.length
@@ -882,6 +923,7 @@
                     })
             }
         }
+
         // ticked
         function ticked() {
             // 连线路径
@@ -889,12 +931,19 @@
                 .attr('d', link => genLinkPath(link))
             // 连线文字位置
             linksText
-                .attr('x', function (d) { return (d.source.x + d.target.x) / 2 })
-                .attr('y', function (d) { return (d.source.y + d.target.y) / 2 })
+                .attr('x', function (d) {
+                    return (d.source.x + d.target.x) / 2
+                })
+                .attr('y', function (d) {
+                    return (d.source.y + d.target.y) / 2
+                })
             // 节点位置
             gs
-                .attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')' })
+                .attr('transform', function (d) {
+                    return 'translate(' + d.x + ',' + d.y + ')'
+                })
         }
+
         // drag
         function started(d) {
             if (!d3.event.active) {
@@ -903,10 +952,12 @@
             d.fx = d.x
             d.fy = d.y
         }
+
         function dragged(d) {
             d.fx = d3.event.x
             d.fy = d3.event.y
         }
+
         function ended(d) {
             if (!d3.event.active) {
                 forceSimulation.alphaTarget(0)
@@ -918,9 +969,9 @@
 </script>
 
 
-<script src="../relationExtraction.js"></script>
-<script src="../entityRecognition.js"></script>
-<script src="../graph.js"></script>
+<script src="/static/js/relationExtraction.js"></script>
+<script src="/static/js/entityRecognition.js"></script>
+<script src="/static/js/graph.js"></script>
 
 </body>
 

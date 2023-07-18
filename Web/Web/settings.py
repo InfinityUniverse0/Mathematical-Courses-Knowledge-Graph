@@ -127,3 +127,4 @@ OPENAI_API_KEY = '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'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
