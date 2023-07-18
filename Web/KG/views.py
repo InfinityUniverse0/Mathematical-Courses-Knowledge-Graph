@@ -6,6 +6,7 @@
 
 from django.shortcuts import render
 from django.http import JsonResponse
+import jieba
 
 
 # 导入backend.py中的所有函数
@@ -18,7 +19,7 @@ def query_course(request):
         course_name = request.POST.get('course_name').strip()
         # 寻找课程节点，可以有多个
         cypher = '''MATCH (n:课程) 
-                 WHERE n.name CONTAINS {} 
+                 WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
         node_list, pnt = nodes_to_list(cursor), 1
@@ -46,5 +47,21 @@ def query_course(request):
 
 def query_all(request):
     if request.method == 'POST':
-        pass
+        name = request.POST.get('name').strip()
+        seg_list = jieba.cut(name)
+        # 根据分词结果，寻找对应节点(课程，知识模块，知识要点)
+        node_list = []
+        for word in seg_list:
+            cypher = '''MATCH (n)
+                        WHERE n.name CONTAINS '{}'
+                        RETURN n'''.format(word)
+            cursor = graph.run(cypher).data()
+            node_list.extend(nodes_to_list(cursor))
+        # 构建返回的数据字典
+        response_data = {
+            'nodes': node_list,
+            'edges': []
+        }
+        return JsonResponse(response_data)
+    return render(request, 'query.html')
 
