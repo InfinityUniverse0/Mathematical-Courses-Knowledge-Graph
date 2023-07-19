@@ -2,74 +2,59 @@
 <html>
 
 <head>
+    <title>欢迎页面</title>
     <meta charset="UTF-8">
-    <meta maximum-scale=1.0, user-scalable=0>
-    <title>Welcome</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            margin: 0;
-            padding: 0;
+            background: linear-gradient(to bottom right, #4a6cd4, #8f3f8d);
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
+            /* 设置页面高度为视口高度 */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
             text-align: center;
         }
 
         h1 {
-            font-size: 42px;
-            color: #fff;
+            font-size: 48px;
+            font-weight: bold;
             margin-bottom: 20px;
         }
 
         p {
-            font-size: 20px;
-            color: #ccc;
-            margin: 10px 0;
+            font-size: 24px;
         }
 
-        .welcome-box {
-            padding: 40px;
-            border-radius: 20px;
-            background-color: #333;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 15px 30px;
-            font-size: 20px;
-            color: #fff;
-            background-color: #007BFF;
+        button {
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #363636;
+            color: #FFC125;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
         }
 
-        .btn:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #1C1C1C;
         }
     </style>
 </head>
 
 <body>
-    <div class="welcome-box">
-        <img class="logo" src="/static/img/logo.ico" alt="Logo">
-        <h1>Welcome测试</h1>
-        <p>这里是欢迎页面</p>
-        <p>Thank you for registering.</p>
-        <a class="btn" href="#">Get Started</a>
+    <div>
+        <h1>欢迎使用平台</h1>
+        <p>在这里你可以...</p>
+        <!-- 添加其他元素、图像等 -->
+        <div class="option">
+            <button>登录</button>
+            <button>注册</button>
+            <button>免费试用</button>
+        </div>
+
     </div>
 </body>
 

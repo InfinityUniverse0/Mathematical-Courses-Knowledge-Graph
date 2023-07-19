@@ -10,13 +10,22 @@ import jieba
 import json
 
 # 导入backend.py中的所有函数
-from backend import *
+from . import backend
 
-graph = init_neo4j()
+graph = backend.init_neo4j()
 
 
 # Create your views here.
 # 提供精确查询，用户输入一个课程名，查出该课程的所有知识模块，以及知识模块之间的关系
+
+# 为GET请求提供跳转接口
+def turn_info_query(request):
+    return render(request, 'info_query.html')
+
+# 为GET请求提供跳转接口
+def turn_study_route(request):
+    return render(request, 'study_route.html')
+
 def query_course(request):
     if request.method == 'POST':
         course_name = request.POST.get('course_name').strip()
@@ -25,7 +34,7 @@ def query_course(request):
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list = nodes_to_list(cursor)
+        node_list = backend.nodes_to_list(cursor)
         node_other = []
         for node in node_list:
             # 寻找每个课程的知识模块
@@ -38,7 +47,7 @@ def query_course(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = paths_to_list(cursor)
+            path_list, nodes = backend.paths_to_list(cursor)
             node_other.extend(nodes)
         node_list.extend(node_other)
 
@@ -62,14 +71,14 @@ def query_vague(request):
                         WHERE n.name CONTAINS '{}'
                         RETURN n'''.format(word)
             cursor = graph.run(cypher).data()
-            node_list.extend(nodes_to_list(cursor))
+            node_list.extend(backend.nodes_to_list(cursor))
         response_data = {
             'course': [],
             'module': [],
             'point': []
         }
         for node in node_list:
-            response_data[level_list[node['level']]].append(node['name'])
+            response_data[backend.level_list[node['level']]].append(node['name'])
 
         return render(request, 'info_query.html', response_data)
     return render(request, 'info_query.html')
@@ -84,10 +93,9 @@ def learn_path(request):
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list = nodes_to_list(cursor)
+        node_list = backend.nodes_to_list(cursor)
         node_other = []
         for node in node_list:
-            # 寻找每个课程的知识模块
             cypher = '''
                     MATCH (n)
                     WHERE id(n) = {}
@@ -96,7 +104,7 @@ def learn_path(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = paths_to_list(cursor)
+            path_list, nodes = backend.paths_to_list(cursor)
             node_other.extend(nodes)
         node_list.extend(node_other)
 
@@ -105,5 +113,5 @@ def learn_path(request):
             'nodes': json.dumps(node_list, ensure_ascii=False),
             'edges': json.dumps(path_list, ensure_ascii=False)
         }
-        return render(request, 'query_path.html', {'search': response_data})
-    return render(request, 'query_path.html')
+        return render(request, 'study_route.html', {'search': response_data})
+    return render(request, 'study_route.html')

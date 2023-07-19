@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>信息查询</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/static/css/option.css"> -->
+    <style>
+        /* CSS样式 */
+        @import "/static/css/option.css";
+
+        @font-face {
+            font-family: 'myfont';
+            src: url("/static/fonts/fonts2.woff2")format("woff2"),
+                url("/static/fonts/glyphicons-halflings-regular.woff")format("woff");
+            font-weight: 400;
+            font-display: auto;
+            font-style: normal;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #E8E8E8;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
+            background-repeat: no-repeat;
+            background-size: 200% 200%;
+            overflow-x: hidden;
+        }
+
+        #graphContainer {
+            border-radius: 5px;
+            width: 700px;
+            height: 600px;
+            margin: 16px auto;
+            border: 0px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.4);
+            position: relative;
+            right: -5px;
+            top: 10px;
+            text-align: center;
+        }
+
+        /*调整课程查询框的样式*/
+        #courseRecognition {
+            /*margin: 10px auto;*/
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 70px;
+            left: 110px;
+            margin-bottom: 70px;
+        }
+
+        /*调整输入框的样式*/
+        #relationExtraction {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 100px;
+        }
+
+        /*调整输入框的样式*/
+        #ask {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 150px;
+        }
+
+        /*学习路线规划按钮*/
+        #studyRoute {
+            margin: 10px auto;
+            position: absolute;
+            left: 170px;
+            top: 200px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        /* 显示 查询到的信息文本框*/
+        #queryresultDetails {
+            width: 550px;
+            height: 600px;
+            border: 1px solid gray;
+            position: absolute;
+            top: 260px;
+            left: 235px;
+            background-color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+
+        /*实体查询的输入框样式*/
+        #entityInput {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 500px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        /*查询结果表的样式*/
+        .courseResults {
+            margin-top: 20px;
+            margin-left: 10px;
+            text-align: center;
+        }
+
+        .courseTable {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 600px;
+        }
+
+        .courseTable th,
+        .courseTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .courseTable th {
+            background-color: #DDA0DD;
+            color: #2F4F4F;
+        }
+
+        .entityInput1,
+        .entityInput2 {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 400px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .entityButton {
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #363636;
+            color: #FFC125;
+            border: none;
+            cursor: pointer;
+        }
+
+        .entityButton:hover {
+            background-color: #1C1C1C;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination button {
+            background-color: #8B008B;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .pagination button:hover {
+            background-color: #1C1C1C;
+        }
+
+        #fuzzquery {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 70px;
+            margin-bottom: 70px;
+            left: 850px;
+        }
+
+        .courseResults {
+            margin-top: 20px;
+            margin-left: 10px;
+            text-align: center;
+        }
+
+        .fuzzTable {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 600px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .fuzzTable th,
+        .fuzzTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .fuzzTable th {
+            background-color: #DDA0DD;
+            color: #2F4F4F;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="info-bar">
+            <button id="toggleBtn" onclick=displayBar()>&#9776 </button>
+            <span class="cssFont_1" style="font-family:'myfont', cursive">Mathematic Knowledge Graph</span>
+            <span class="demo" style="font-family:'myfont', cursive"> DEMO</span>
+        </div>
+        <ul class="button-bar" id="navbar">
+            <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
+            <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
+
+
+            <li onclick="goToStudyRoute()">&#1421 学习路线</li>
+            <li onclick=recognizeEntities()>&#9729 数学猫娘问答</li>
+            <li id="askButton">&#10050 课程总览</li>
+        </ul>
+    </div>
+    <div id="courseRecognition">
+        <div>
+            <input type="text" class="entityInput1" placeholder="请输入您要查询的课程关键字">
+            <button class="entityButton" onclick="displayCourses()">查询相关课程</button>
+        </div>
+        <div class="courseResults">
+            <table class="courseTable">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>介绍</th>
+                        <th>参考教材</th>
+                    </tr>
+                </thead>
+                <tbody class="courseData">
+                    <!-- 这里将动态插入查询到的课程信息 -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button onclick="previousPage()">上一页</button>
+                <span class="page-info" id="pageInfo"></span>
+                <button onclick="nextPage()">下一页</button>
+            </div>
+        </div>
+        <div id="graphContainer">
+            <!-- <span>关系图谱明细</span> -->
+            <svg width="600" height="500"></svg>
+        </div>
+    </div>
+
+    <div id="fuzzquery">
+        <div>
+            <input type="text" class="entityInput2" placeholder="请输入您要查询的数学知识点">
+            <button class="entityButton" onclick="displayCourses()">查询知识点</button>
+        </div>
+        <!--知识要点表-->
+        <div class="fuzzResults">
+            <table class="fuzzTable">
+                <thead>
+                    <tr>
+                        <th>属性</th>
+                    </tr>
+                </thead>
+                <tbody class="fuzzData">
+                    <!-- 这里将动态插入查询到的课程信息 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--<div id="queryresultDetails" class="container">-->
+    <!--    查询结果-->
+    <!--    <span id="xxx"></span>-->
+    <!--</div>-->
+
+    <!--<div id="graphContainer">-->
+    <!--    相关图谱-->
+    <!--</div>-->
+    <!-- <script type="text/javascript" src="/static/js/drawnodes.js"></script> -->
+    <script src="/static/js/createreq.js"></script>
+    <script src="/static/js/tables.js"></script>
+    <script src="http://d3js.org/d3.v5.min.js"></script>
+    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+    <script src="/static/js/toggle.js"></script>
+    <!-- <script src="/relationExtraction.js"></script>
+    <script src="../entityRecognition.js"></script> -->
+    <script src="/static/js/graph.js"></script>
+
+</body>
+
+</html>
