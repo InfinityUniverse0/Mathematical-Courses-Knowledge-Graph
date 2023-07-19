@@ -50,7 +50,7 @@ def paths_to_list(cursor_path):
             'source': path.start_node.identity,
             'target': path.end_node.identity,
             'relation': rel,
-            'value': 1 if rel == '先导' else 1.618
+            'value': 1.618 if rel == '先导' else 1.0
         }
         path_list.append(path_dict)
     return path_list

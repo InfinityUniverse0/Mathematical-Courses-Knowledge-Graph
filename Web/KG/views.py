@@ -22,7 +22,7 @@ def query_course(request):
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list, pnt = nodes_to_list(cursor), 1
+        node_list = nodes_to_list(cursor)
         for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
@@ -31,10 +31,10 @@ def query_course(request):
                     with n
                     OPTIONAL MATCH p = (m)-[r]->(k)
                     WHERE exists((m)-[:属于]->(n))
-                    RETURN p
+                    RETURN p, r
                       '''.format(node['name'])
             cursor = graph.run(cypher).data()
-            path_list, pnt = paths_to_list(cursor, pnt)
+            path_list = paths_to_list(cursor)
 
         # 构建返回的数据字典
         response_data = {
@@ -42,10 +42,10 @@ def query_course(request):
             'edges': path_list
         }
         return JsonResponse(response_data)
-    return render(request, 'query.html')
+    return render(request, 'info_query.html')
 
 
-def query_all(request):
+def query_vague(request):
     if request.method == 'POST':
         name = request.POST.get('name').strip()
         seg_list = jieba.cut(name)
@@ -57,11 +57,22 @@ def query_all(request):
                         RETURN n'''.format(word)
             cursor = graph.run(cypher).data()
             node_list.extend(nodes_to_list(cursor))
+        path_list = []
+        for node in node_list:
+            cypher = '''
+                     MATCH (n:)
+                     WHERE id(n) = {}
+                     WITH n
+                     OPTIONAL MATCH p = (m)-[r]->[n]
+                     RETURN p, r
+                     '''
+            cursor = graph.run(cypher).data()
+            path_list.extend(paths_to_list(cursor))
         # 构建返回的数据字典
         response_data = {
             'nodes': node_list,
-            'edges': []
+            'edges': path_list
         }
         return JsonResponse(response_data)
-    return render(request, 'query.html')
+    return render(request, 'info_query.html')
 
