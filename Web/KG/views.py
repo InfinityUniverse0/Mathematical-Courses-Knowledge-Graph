@@ -28,7 +28,12 @@ def turn_study_route(request):
 
 def query_course(request):
     if request.method == 'POST':
-        course_name = request.POST.get('course_name').strip()
+        body = request.body.decode('utf-8')
+        try:
+            data = json.loads(body)
+            course_name = data['name']
+        except json.JSONDecodeError:
+            return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         # 寻找课程节点，可以有多个
         cypher = '''MATCH (n:课程) 
                  WHERE n.name CONTAINS '{}'
@@ -65,7 +70,12 @@ def query_course(request):
 # 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
 def query_vague(request):
     if request.method == 'POST':
-        name = request.POST.get('name').strip()
+        body = request.body.decode('utf-8')
+        try:
+            data = json.loads(body)
+            name = data['name']
+        except json.JSONDecodeError:
+            return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         seg_list = jieba.cut(name)
         # 根据分词结果，寻找对应节点(课程，知识模块，知识要点)
         node_list = []
