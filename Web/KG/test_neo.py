@@ -8,7 +8,6 @@ cypher = "MATCH (n:课程) " \
          "RETURN n".format(course_name)
 cursor = graph.run(cypher).data()
 node_dict = nodes_to_list(cursor)
-pnt = 1
 for node in node_dict:
     print(node)
     # 寻找每个课程节点的关联节点
@@ -18,9 +17,9 @@ for node in node_dict:
             with n
             OPTIONAL MATCH p = (m)-[r]->(k)
             WHERE exists((m)-[:属于]->(n))
-            RETURN p
+            RETURN p, r
               '''.format(node['name'])
     cursor2 = graph.run(cypher2).data()
-    path_dict, pnt = paths_to_list(cursor2, pnt)
+    path_dict = paths_to_list(cursor2)
     for path in path_dict:
         print(path)
