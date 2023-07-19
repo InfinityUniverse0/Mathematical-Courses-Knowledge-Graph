@@ -26,13 +26,13 @@ def query_course(request):
         for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
-                    MATCH (n:课程)
-                    WHERE n.name = '{}' 
+                    MATCH (n)
+                    WHERE id(n) = {} 
                     with n
                     OPTIONAL MATCH p = (m)-[r]->(k)
                     WHERE exists((m)-[:属于]->(n))
                     RETURN p, r
-                      '''.format(node['name'])
+                      '''.format(node['id'])
             cursor = graph.run(cypher).data()
             path_list = paths_to_list(cursor)
 
@@ -65,7 +65,7 @@ def query_vague(request):
                      WITH n
                      OPTIONAL MATCH p = (m)-[r]->[n]
                      RETURN p, r
-                     '''
+                     '''.format(node['id'])
             cursor = graph.run(cypher).data()
             path_list.extend(paths_to_list(cursor))
         # 构建返回的数据字典
