@@ -32,19 +32,24 @@ def init_neo4j():
     return Graph(config['profile'], auth=config['auth'])
 
 
-def nodes_to_list(cursor_node):
+def nodes_to_list(cursor_node, table=False):
     '''将py2neo.Node对象转换为点集'''
     node_list = []
     cursor = cursor_node
     for node in cursor:
         node = node['n']
+        if node is None:
+            continue
         node_dict = {
             'id': node.identity,
             'level': level_dict[list(node.labels)[0]],
             'name': node['name']
         }
-        # for key in node.keys():
-        # node_dict[key] = node[key]
+        if table:
+            node_dict.update({
+                'refer': node['references'],
+                'intro': node['intro']
+            })
         node_list.append(node_dict)
     return node_list
 
@@ -62,6 +67,8 @@ def paths_to_list(cursor_path):
     path_list, node_list = [], []
     cursor = cursor_path
     for p in cursor:
+        if p['p'] is None:
+            continue
         path, relation = p['p'], p['r']
         start_node, end_node = path.start_node, path.end_node
         node_list.append({'n': start_node})

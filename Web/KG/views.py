@@ -32,6 +32,8 @@ def query_course(request):
         try:
             data = json.loads(body)
             course_name = data['name']
+            if course_name == '':
+                return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         # 寻找课程节点，可以有多个
@@ -39,8 +41,8 @@ def query_course(request):
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list = nodes_to_list(cursor)
-        node_other = []
+        node_list = nodes_to_list(cursor, table=True)
+        node_other, path_list, path_other = [], [], []
         for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
@@ -52,9 +54,14 @@ def query_course(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = paths_to_list(cursor)
+            paths, nodes = paths_to_list(cursor)
             node_other.extend(nodes)
+            path_other.extend(paths)
+
         node_list.extend(node_other)
+        path_list.extend(path_other)
+
+        # 去重处理
         node_list = unique_nodes(node_list)
         path_list = unique_paths(path_list)
 
@@ -66,6 +73,7 @@ def query_course(request):
 
         return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
+
 
 # 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
 def query_vague(request):
@@ -80,17 +88,46 @@ def query_vague(request):
         # 根据分词结果，寻找对应节点(课程，知识模块，知识要点)
         node_list = []
         for word in seg_list:
-            cypher = '''MATCH (n)
+            # 先找知识要点
+            cypher = '''MATCH (n:知识要点)
                         WHERE n.name CONTAINS '{}'
                         RETURN n'''.format(word)
             cursor = graph.run(cypher).data()
-            node_list.extend(nodes_to_list(cursor))
+            point_list = nodes_to_list(cursor)
+            node_list.extend(point_list)
+            for point in point_list:
+
+                # 遍历每个知识要点，寻找对应的知识模块(唯一)
+                cypher = '''
+                        MATCH (m:知识要点)
+                        WHERE id(m) = {}
+                        with m
+                        OPTIONAL MATCH p = (m)-[r:含于]->(n)
+                        RETURN n'''.format(point['id'])
+                cursor = graph.run(cypher).data()
+                module = nodes_to_list(cursor)[0]
+                node_list.append(module)
+
+                # 根据该知识模块，寻找对应的课程(唯一)
+                cypher = '''
+                        MATCH (m:知识模块)
+                        WHERE id(m) = {}
+                        with m
+                        OPTIONAL MATCH p = (m)-[r:属于]->(n)
+                        RETURN n'''.format(module['id'])
+                cursor = graph.run(cypher).data()
+                course = nodes_to_list(cursor)[0]
+                node_list.append(course)
+
+        # 去重处理
+        node_list = unique_nodes(node_list)
+
         response_data = {
             'course': [],
             'module': [],
             'point': []
         }
-        node_list = unique_nodes(node_list)
+
         for node in node_list:
             response_data[level_list[node['level']]].append(node['name'])
 
@@ -127,6 +164,7 @@ def learn_path(request):
             node_other.extend(nodes)
         node_list.extend(node_other)
 
+        # 去重处理
         node_list = unique_nodes(node_list)
         path_list = unique_paths(path_list)
 
@@ -137,3 +175,7 @@ def learn_path(request):
         }
         return JsonResponse({'search': response_data})
     return render(request, 'study_route.html')
+
+
+def courses_overview(request):
+    pass

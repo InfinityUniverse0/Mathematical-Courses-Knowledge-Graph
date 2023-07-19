@@ -7,5 +7,6 @@ urlpatterns = [
     path('info_query/post1', views.query_course),
     path('info_query/post2', views.query_vague),
     path('study_route/post1', views.learn_path),
+    path('courses_overview/', views.courses_overview),
 ]
 
