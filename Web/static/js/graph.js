@@ -1,10 +1,30 @@
-const btn1 = document.getElementById("askButton");
-btn1.addEventListener("click", graphDisplay);
-var nodes1 = document.currentScript.getAttribute('data-nodes');
-var data_nodes = JSON.parse(nodes1);
-var links1 = document.currentScript.getAttribute('data-links');
-var data_links = JSON.parse(links1)
-function graphDisplay(event) {
+function sendRequest(post, inputValue) {
+    fetch(post, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({ name: inputValue })
+    })
+        .then(response => response.json())
+        .then(data => {
+            setData(data.search)
+        })
+        .catch(error => {
+            console.log('请求失败:', error);
+        });
+}
+//为graphDisplay设置好参数
+function setData(data) {
+    nodes1 = data.nodes;
+    links1 = data.links;
+    data_nodes = JSON.parse(data.nodes);
+    data_links = JSON.parse(data.links);
+    graphDisplay(data_nodes, data_links);
+
+}
+function graphDisplay(data_nodes, data_links) {
     let marge = { top: 0, bottom: 0, left: 0, right: 0 }
     let svg = d3.select('svg')
     let width = svg.attr('width')
@@ -24,37 +44,8 @@ function graphDisplay(event) {
     // 节点集
     console.log('2', nodes1, typeof nodes1, typeof data_nodes, data_nodes)
 
-    // let nodes = data_nodes
-    // let tempEdges = data_links
-    let nodes = [
-        { id: 12, name: '湖南邵阳' },
-        { id: 2, name: '山东泰安' },
-        { id: 3, name: '广东阳江不知道怎么回' },
-        { id: 4, name: '山西太原' },
-        { id: 5, name: '亮' },
-        { id: 6, name: '丽' },
-        { id: 7, name: '雪' },
-        { id: 8, name: '小明' },
-        { id: 9, name: '组长' },
-        { id: 12, name: '湖南邵阳' },
-        { id: 2, name: '山东泰安' },
-        { id: 2, name: '山东泰安' }
-
-    ]
-    let tempEdges = [
-        { id: 1, source: 12, target: 5, relation: '籍贯', value: 1.3 },
-        { id: 2, source: 5, target: 6, relation: '舍友', value: 1 },
-        { id: 3, source: 5, target: 7, relation: '舍友', value: 1 },
-        { id: 4, source: 5, target: 8, relation: '舍友', value: 1 },
-        { id: 5, source: 2, target: 7, relation: '籍贯', value: 2 },
-        { id: 6, source: 3, target: 6, relation: '籍贯', value: 0.9 },
-        { id: 7, source: 4, target: 8, relation: '籍贯', value: 1 },
-        { id: 8, source: 6, target: 7, relation: '同学', value: 1.6 },
-        { id: 9, source: 7, target: 8, relation: '朋友', value: 0.7 },
-        { id: 10, source: 7, target: 9, relation: '职责', value: 2 },
-        { id: 11, source: 9, target: 7, relation: '人物', value: 2 },
-        { id: 12, source: 9, target: 7, relation: '哈哈哈', value: 2 }
-    ]
+    let nodes = data_nodes
+    let tempEdges = data_links
     // nodes.forEach(item => {
 
     // })
@@ -186,16 +177,16 @@ function graphDisplay(event) {
         })
         .attr('fill', function (d, i) {
             //为不同层级的结点绘制不同的颜色
-            // if (d.level === 0) {
-            //     return '#00EE76';
-            // } else if (d.level === 1) {
-            //     return '#F0FFF0';
-            // } else if (d.level === 2) {
-            //     return 'pink';
-            // } else {
-            //     return '#B0E2FF';
-            // }
-            return '#00EE76';
+            if (d.level === 0) {
+                return '#00EE76';
+            } else if (d.level === 1) {
+                return '#F0FFF0';
+            } else if (d.level === 2) {
+                return 'pink';
+            } else {
+                return '#B0E2FF';
+            }
+            // return '#00EE76';
         })
         .attr('stroke', 'grey')
         .attr('stroke-width', 3)
@@ -251,17 +242,16 @@ function graphDisplay(event) {
                 .on("end", ended));
         gs.append('circle')
             .attr('fill', function (d) {
-                //为不同层级的结点绘制不同的颜色
-                // if (d.level === 0) {
-                //     return '#00EE76';
-                // } else if (d.level === 1) {
-                //     return '#F0FFF0';
-                // } else if (d.level === 2) {
-                //     return 'pink';
-                // } else {
-                //     return '#B0E2FF';
-                // }
-                return 'grey';
+                为不同层级的结点绘制不同的颜色
+                if (d.level === 0) {
+                    return '#00EE76';
+                } else if (d.level === 1) {
+                    return '#F0FFF0';
+                } else if (d.level === 2) {
+                    return 'pink';
+                } else {
+                    return '#B0E2FF';
+                }
             })
             .attr('r', 35)
             .attr('stroke', 'grey')

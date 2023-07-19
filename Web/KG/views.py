@@ -10,9 +10,9 @@ import jieba
 import json
 
 # 导入backend.py中的所有函数
-from . import backend
+from .backend import *
 
-graph = backend.init_neo4j()
+graph = init_neo4j()
 
 
 # Create your views here.
@@ -34,7 +34,7 @@ def query_course(request):
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list = backend.nodes_to_list(cursor)
+        node_list = nodes_to_list(cursor)
         node_other = []
         for node in node_list:
             # 寻找每个课程的知识模块
@@ -47,14 +47,16 @@ def query_course(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = backend.paths_to_list(cursor)
+            path_list, nodes = paths_to_list(cursor)
             node_other.extend(nodes)
         node_list.extend(node_other)
+        node_list = unique_nodes(node_list)
+        path_list = unique_paths(path_list)
 
         # 构建返回的数据字典
         response_data = {
             'nodes': json.dumps(node_list, ensure_ascii=False),
-            'edges': json.dumps(path_list, ensure_ascii=False)
+            'links': json.dumps(path_list, ensure_ascii=False)
         }
         return render(request, 'info_query.html', {'search': response_data})
     return render(request, 'info_query.html')
@@ -71,14 +73,15 @@ def query_vague(request):
                         WHERE n.name CONTAINS '{}'
                         RETURN n'''.format(word)
             cursor = graph.run(cypher).data()
-            node_list.extend(backend.nodes_to_list(cursor))
+            node_list.extend(nodes_to_list(cursor))
         response_data = {
             'course': [],
             'module': [],
             'point': []
         }
+        node_list = unique_nodes(node_list)
         for node in node_list:
-            response_data[backend.level_list[node['level']]].append(node['name'])
+            response_data[level_list[node['level']]].append(node['name'])
 
         return render(request, 'info_query.html', response_data)
     return render(request, 'info_query.html')
@@ -87,13 +90,18 @@ def query_vague(request):
 # 提供学习路径的查询，用户选择一个课程，查出所有的先导课程
 def learn_path(request):
     if request.method == 'POST':
-        course_name = request.POST.get('course_name').strip()
+        body = request.body.decode('utf-8')
+        try:
+            data = json.loads(body)
+            course_name = data['name']
+        except json.JSONDecodeError:
+            return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         # 寻找课程节点，可以有多个
         cypher = '''MATCH (n:课程) 
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list = backend.nodes_to_list(cursor)
+        node_list = nodes_to_list(cursor)
         node_other = []
         for node in node_list:
             cypher = '''
@@ -104,14 +112,19 @@ def learn_path(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = backend.paths_to_list(cursor)
+            path_list, nodes = paths_to_list(cursor)
             node_other.extend(nodes)
         node_list.extend(node_other)
+
+        node_list = unique_nodes(node_list)
+        path_list = unique_paths(path_list)
+        for p in path_list:
+            print(p)
 
         # 构建返回的数据字典
         response_data = {
             'nodes': json.dumps(node_list, ensure_ascii=False),
-            'edges': json.dumps(path_list, ensure_ascii=False)
+            'links': json.dumps(path_list, ensure_ascii=False)
         }
-        return render(request, 'study_route.html', {'search': response_data})
+        return JsonResponse({'search': response_data})
     return render(request, 'study_route.html')
