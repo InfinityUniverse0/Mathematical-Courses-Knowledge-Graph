@@ -7,11 +7,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import jieba
-
+import json
 
 # 导入backend.py中的所有函数
 from backend import *
+
 graph = init_neo4j()
+
 
 # Create your views here.
 def query_course(request):
@@ -38,10 +40,10 @@ def query_course(request):
 
         # 构建返回的数据字典
         response_data = {
-            'nodes': node_list,
-            'edges': path_list
+            'nodes': json.dumps(node_list, ensure_ascii=False),
+            'edges': json.dumps(path_list, ensure_ascii=False)
         }
-        return JsonResponse(response_data)
+        return render(request, 'info_query.html', {'search': response_data})
     return render(request, 'info_query.html')
 
 
@@ -70,9 +72,8 @@ def query_vague(request):
             path_list.extend(paths_to_list(cursor))
         # 构建返回的数据字典
         response_data = {
-            'nodes': node_list,
-            'edges': path_list
+            'nodes': json.dumps(node_list, ensure_ascii=False),
+            'edges': json.dumps(path_list, ensure_ascii=False)
         }
-        return JsonResponse(response_data)
+        return render(request, 'info_query.html', {'search': response_data})
     return render(request, 'info_query.html')
-
