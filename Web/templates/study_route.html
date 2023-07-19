@@ -95,38 +95,45 @@
             <li onclick=recognizeEntities()>&#9729 数学猫娘问答</li>
             <li id="askButton">&#10050 课程总览</li>
         </ul>
-
-        <div align="center" id="relationExtraction">
-            <input type="text" id="relationInput" placeholder="输入您想学习的课程">
-            <button id="studyRoute" onclick=recognizeEntities()>查询</button>
-        </div>
+        <form align="center" id="study_form" action="post1" method="POST">
+            <input type="text" id="course_input" name="course_name" placeholder="输入您想学习的课程"></input>
+            <button type="submit" id="studyRoute">查询</button>
+        </form>
 
         <div id="graphContainer">
             学习路线
             <!--知识图谱展示部分-->
             <svg width="1000" height="650"></svg>
         </div>
-        <!--    用于显示结点详细内容的框-->
-        <!-- <div
-        style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
-        这里是展示的框
-        <span id="xxx"></span>
-        <div>课程名</div>
-        <div>课程简介</div>
-        <div>参考书籍</div>
-    </div> -->
+    </div>
+    <script>
+        var nodes1;
+        var links1;
+        var data_nodes;
+        var data_links;
+        // 获取上面的form表单
+        const form = document.getElementById('study_form');
+        // 获取上面的input输入框
+        const input = document.getElementById('course_input');
+        // 获取上面的button按钮
+        const button = document.getElementById('studyRoute');
+        // 给form表单添加点击事件
+        form.addEventListener('submit', function (e) {
+            //阻止默认提交事件
+            e.preventDefault()
+            //获取输入框的值
+            const inputValue = input.value.trim();
+            post = 'post1'
+            // 发送异步POST请求
+            sendRequest(post, inputValue)
+        });
+    </script>
+    <!--<script-->
 
-
-        <!--<script-->
-
-        <script src="http://d3js.org/d3.v5.min.js"></script>
-        <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
-        <script src="/static/js/toggle.js"></script>
-        <script src="/static/js/createreq.js"></script>
-        <!-- <script src="./relationExtraction.js"></script>
-    <script src="../entityRecognition.js"></script> -->
-        <script src="/static/js/graph.js"></script>
-
+    <script src="http://d3js.org/d3.v5.min.js"></script>
+    <script src="/static/js/toggle.js"></script>
+    <script src="/static/js/createreq.js"></script>
+    <script src="/static/js/graph.js"></script>
 </body>
 
 
