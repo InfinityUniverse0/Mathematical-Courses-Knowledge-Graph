@@ -58,7 +58,8 @@ def query_course(request):
             'nodes': json.dumps(node_list, ensure_ascii=False),
             'links': json.dumps(path_list, ensure_ascii=False)
         }
-        return render(request, 'info_query.html', {'search': response_data})
+
+        return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
 
 # 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
@@ -83,7 +84,7 @@ def query_vague(request):
         for node in node_list:
             response_data[level_list[node['level']]].append(node['name'])
 
-        return render(request, 'info_query.html', response_data)
+        return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
 
 
@@ -118,8 +119,6 @@ def learn_path(request):
 
         node_list = unique_nodes(node_list)
         path_list = unique_paths(path_list)
-        for p in path_list:
-            print(p)
 
         # 构建返回的数据字典
         response_data = {
