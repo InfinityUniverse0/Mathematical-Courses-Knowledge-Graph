@@ -5,13 +5,25 @@
 '''
 
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+
 
 # 导入backend.py中的所有函数
 from .backend import *
+import jieba
 
-# 导入neo4j_db/course_graph.py 中的 CourseGraph类
-import sys
-sys.path.append("..")
-from neo4j_db.course_graph import CourseGraph
 
 # Create your views here.
+def QA_normal(request):
+    if request.method == 'POST':
+        question = request.POST.get('question').strip()
+        seg_list = jieba.cut(question)
+    return render(request, 'QA.html')
+
+
+
+def QA_advanced(request):
+    if request.method == 'POST':
+        question = request.POST.get('question').strip()
+    return render(request, 'QA.html')

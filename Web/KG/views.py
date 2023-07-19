@@ -6,45 +6,112 @@
 
 from django.shortcuts import render
 from django.http import JsonResponse
-
+import jieba
+import json
 
 # 导入backend.py中的所有函数
-from backend import *
-graph = init_neo4j()
+from . import backend
+
+graph = backend.init_neo4j()
+
 
 # Create your views here.
+# 提供精确查询，用户输入一个课程名，查出该课程的所有知识模块，以及知识模块之间的关系
+
+# 为GET请求提供跳转接口
+def turn_info_query(request):
+    return render(request, 'info_query.html')
+
+# 为GET请求提供跳转接口
+def turn_study_route(request):
+    return render(request, 'study_route.html')
+
 def query_course(request):
     if request.method == 'POST':
         course_name = request.POST.get('course_name').strip()
         # 寻找课程节点，可以有多个
         cypher = '''MATCH (n:课程) 
-                 WHERE n.name CONTAINS {} 
+                 WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
-        node_list, pnt = nodes_to_list(cursor), 1
+        node_list = backend.nodes_to_list(cursor)
+        node_other = []
         for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
-                    MATCH (n:课程)
-                    WHERE n.name = '{}' 
+                    MATCH (n)
+                    WHERE id(n) = {} 
                     with n
                     OPTIONAL MATCH p = (m)-[r]->(k)
                     WHERE exists((m)-[:属于]->(n))
-                    RETURN p
-                      '''.format(node['name'])
+                    RETURN p, r
+                      '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, pnt = paths_to_list(cursor, pnt)
+            path_list, nodes = backend.paths_to_list(cursor)
+            node_other.extend(nodes)
+        node_list.extend(node_other)
 
         # 构建返回的数据字典
         response_data = {
-            'nodes': node_list,
-            'edges': path_list
+            'nodes': json.dumps(node_list, ensure_ascii=False),
+            'edges': json.dumps(path_list, ensure_ascii=False)
         }
-        return JsonResponse(response_data)
-    return render(request, 'query.html')
+        return render(request, 'info_query.html', {'search': response_data})
+    return render(request, 'info_query.html')
 
-
-def query_all(request):
+# 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
+def query_vague(request):
     if request.method == 'POST':
-        pass
+        name = request.POST.get('name').strip()
+        seg_list = jieba.cut(name)
+        # 根据分词结果，寻找对应节点(课程，知识模块，知识要点)
+        node_list = []
+        for word in seg_list:
+            cypher = '''MATCH (n)
+                        WHERE n.name CONTAINS '{}'
+                        RETURN n'''.format(word)
+            cursor = graph.run(cypher).data()
+            node_list.extend(backend.nodes_to_list(cursor))
+        response_data = {
+            'course': [],
+            'module': [],
+            'point': []
+        }
+        for node in node_list:
+            response_data[backend.level_list[node['level']]].append(node['name'])
 
+        return render(request, 'info_query.html', response_data)
+    return render(request, 'info_query.html')
+
+
+# 提供学习路径的查询，用户选择一个课程，查出所有的先导课程
+def learn_path(request):
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name').strip()
+        # 寻找课程节点，可以有多个
+        cypher = '''MATCH (n:课程) 
+                 WHERE n.name CONTAINS '{}'
+                 RETURN n'''.format(course_name)
+        cursor = graph.run(cypher).data()
+        node_list = backend.nodes_to_list(cursor)
+        node_other = []
+        for node in node_list:
+            cypher = '''
+                    MATCH (n)
+                    WHERE id(n) = {}
+                    with n
+                    OPTIONAL MATCH p = (n)-[r:先导*]->(predecessork)
+                    RETURN p, r
+                      '''.format(node['id'])
+            cursor = graph.run(cypher).data()
+            path_list, nodes = backend.paths_to_list(cursor)
+            node_other.extend(nodes)
+        node_list.extend(node_other)
+
+        # 构建返回的数据字典
+        response_data = {
+            'nodes': json.dumps(node_list, ensure_ascii=False),
+            'edges': json.dumps(path_list, ensure_ascii=False)
+        }
+        return render(request, 'study_route.html', {'search': response_data})
+    return render(request, 'study_route.html')

@@ -7,6 +7,22 @@
 # Begin Here
 from py2neo import Graph
 
+level_dict = {
+    '课程模块': 0,
+    '课程': 1,
+    '知识模块': 2,
+    '知识要点': 3
+}
+
+level_list = ['course_module', 'course', 'module', 'point']
+
+name_map = {
+    '课程模块': 'course_module',
+    '课程': 'course',
+    '知识模块': 'module',
+    '知识要点': 'point'
+}
+
 
 def init_neo4j():
     config = {
@@ -22,26 +38,34 @@ def nodes_to_list(cursor_node):
     cursor = cursor_node
     for node in cursor:
         node = node['n']
-        node_dict = {'id': node.identity}
+        node_dict = {
+            'id': node.identity,
+            'level': level_dict[list(node.labels)[0]]
+        }
         for key in node.keys():
             node_dict[key] = node[key]
         node_list.append(node_dict)
     return node_list
 
 
-def paths_to_list(cursor_path, begin_id):
+def paths_to_list(cursor_path):
     '''将py2neo.Path对象转换为边集'''
-    path_list = []
+    path_list, node_list = [], []
     cursor = cursor_path
-    for path in cursor:
-        path = path['p']
+    for p in cursor:
+        path, relation = p['p'], p['r']
+        start_node, end_node = path.start_node, path.end_node
+        node_list.append({'n': start_node})
+        node_list.append({'n': end_node})
+        rel = list(path.types())[0]
+        if isinstance(relation, list):
+            relation = relation[0]
         path_dict = {
-            'id': begin_id,
-            'source': path.start_node.identity,
-            'target': path.end_node.identity,
-            'relation': list(path.types())[0],
-            'value': 1
+            'id': relation.identity,
+            'source': start_node.identity,
+            'target': end_node.identity,
+            'relation': rel,
+            'value': 1.618 if rel == '先导' else 1.0
         }
-        begin_id += 1
         path_list.append(path_dict)
-    return path_list, begin_id
+    return path_list, nodes_to_list(node_list)

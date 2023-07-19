@@ -9,21 +9,6 @@ from django.shortcuts import render
 # 导入backend.py中的所有函数
 from .backend import *
 
-# 导入neo4j_db/course_graph.py 中的 CourseGraph类
-import sys
-
-sys.path.append("..")
-from neo4j_db.course_graph import CourseGraph
-
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-from py2neo import Graph, Node, Relationship
-import openai
-import json
-
-openai.api_key = settings.OPENAI_API_KEY
-
-
 # Create your views here.
 
 # 404
@@ -48,7 +33,7 @@ def index_page(request):
 
 # 聊天页面
 # - 暂时存放在此,以后可能会迁移到其他应用下
-def chat(request):
+'''def chat(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
 
@@ -72,4 +57,4 @@ def chat(request):
 
         return JsonResponse({'completion': completion})
 
-    return render(request, 'chat.html')
+    return render(request, 'chat.html')'''
