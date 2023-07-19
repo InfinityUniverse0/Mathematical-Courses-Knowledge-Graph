@@ -6,11 +6,21 @@
 
 # Begin Here
 from py2neo import Graph
+
 level_dict = {
     '课程模块': 0,
     '课程': 1,
     '知识模块': 2,
     '知识要点': 3
+}
+
+level_list = ['course_module', 'course', 'module', 'point']
+
+name_map = {
+    '课程模块': 'course_module',
+    '课程': 'course',
+    '知识模块': 'module',
+    '知识要点': 'point'
 }
 
 
@@ -40,17 +50,22 @@ def nodes_to_list(cursor_node):
 
 def paths_to_list(cursor_path):
     '''将py2neo.Path对象转换为边集'''
-    path_list = []
+    path_list, node_list = [], []
     cursor = cursor_path
     for p in cursor:
         path, relation = p['p'], p['r']
+        start_node, end_node = path.start_node, path.end_node
+        node_list.append({'n': start_node})
+        node_list.append({'n': end_node})
         rel = list(path.types())[0]
+        if isinstance(relation, list):
+            relation = relation[0]
         path_dict = {
             'id': relation.identity,
-            'source': path.start_node.identity,
-            'target': path.end_node.identity,
+            'source': start_node.identity,
+            'target': end_node.identity,
             'relation': rel,
             'value': 1.618 if rel == '先导' else 1.0
         }
         path_list.append(path_dict)
-    return path_list
+    return path_list, nodes_to_list(node_list)

@@ -127,4 +127,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # OpenAI API Key
-OPENAI_API_KEY = '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'
+# OPENAI_API_KEY = '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'
+OPENAI_API_KEY = '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'

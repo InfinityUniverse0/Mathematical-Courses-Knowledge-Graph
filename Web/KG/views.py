@@ -16,6 +16,7 @@ graph = init_neo4j()
 
 
 # Create your views here.
+# 提供精确查询，用户输入一个课程名，查出该课程的所有知识模块，以及知识模块之间的关系
 def query_course(request):
     if request.method == 'POST':
         course_name = request.POST.get('course_name').strip()
@@ -25,6 +26,7 @@ def query_course(request):
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
         node_list = nodes_to_list(cursor)
+        node_other = []
         for node in node_list:
             # 寻找每个课程的知识模块
             cypher = '''
@@ -36,7 +38,9 @@ def query_course(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list = paths_to_list(cursor)
+            path_list, nodes = paths_to_list(cursor)
+            node_other.extend(nodes)
+        node_list.extend(node_other)
 
         # 构建返回的数据字典
         response_data = {
@@ -46,7 +50,7 @@ def query_course(request):
         return render(request, 'info_query.html', {'search': response_data})
     return render(request, 'info_query.html')
 
-
+# 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
 def query_vague(request):
     if request.method == 'POST':
         name = request.POST.get('name').strip()
@@ -59,21 +63,47 @@ def query_vague(request):
                         RETURN n'''.format(word)
             cursor = graph.run(cypher).data()
             node_list.extend(nodes_to_list(cursor))
-        path_list = []
+        response_data = {
+            'course': [],
+            'module': [],
+            'point': []
+        }
         for node in node_list:
+            response_data[level_list[node['level']]].append(node['name'])
+
+        return render(request, 'info_query.html', response_data)
+    return render(request, 'info_query.html')
+
+
+# 提供学习路径的查询，用户选择一个课程，查出所有的先导课程
+def learn_path(request):
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name').strip()
+        # 寻找课程节点，可以有多个
+        cypher = '''MATCH (n:课程) 
+                 WHERE n.name CONTAINS '{}'
+                 RETURN n'''.format(course_name)
+        cursor = graph.run(cypher).data()
+        node_list = nodes_to_list(cursor)
+        node_other = []
+        for node in node_list:
+            # 寻找每个课程的知识模块
             cypher = '''
-                     MATCH (n:)
-                     WHERE id(n) = {}
-                     WITH n
-                     OPTIONAL MATCH p = (m)-[r]->[n]
-                     RETURN p, r
-                     '''.format(node['id'])
+                    MATCH (n)
+                    WHERE id(n) = {}
+                    with n
+                    OPTIONAL MATCH p = (n)-[r:先导*]->(predecessork)
+                    RETURN p, r
+                      '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list.extend(paths_to_list(cursor))
+            path_list, nodes = paths_to_list(cursor)
+            node_other.extend(nodes)
+        node_list.extend(node_other)
+
         # 构建返回的数据字典
         response_data = {
             'nodes': json.dumps(node_list, ensure_ascii=False),
             'edges': json.dumps(path_list, ensure_ascii=False)
         }
-        return render(request, 'info_query.html', {'search': response_data})
-    return render(request, 'info_query.html')
+        return render(request, 'query_path.html', {'search': response_data})
+    return render(request, 'query_path.html')
