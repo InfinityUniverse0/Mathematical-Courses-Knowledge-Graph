@@ -40,53 +40,34 @@
 
         #graphContainer {
             border-radius: 5px;
-            width: 800px;
-            height: 650px;
+            width: 1000px;
+            height: 660px;
             margin: 16px auto;
             border: 0px solid #ccc;
             background-color: rgba(255, 255, 255, 0.4);
-            position: absolute;
+            /* position: absolute;
             right: 20px;
-            top: 100px;
+            top: 100px; */
             text-align: center;
-        }
-
-        /*调整输入框的样式*/
-        #entityRecognition {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 50px;
-        }
-
-        /*调整输入框的样式*/
-        #relationExtraction {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 100px;
-        }
-
-        /*调整输入框的样式*/
-        #ask {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 150px;
         }
 
         /*学习路线规划按钮*/
         #studyRoute {
             margin: 10px auto;
-            position: absolute;
-            left: 170px;
-            top: 200px;
+            /* position: absolute; */
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 16px;
+            top: 80px;
+            background-color: #363636;
+            color: #FFC125;
+            border: none;
+            cursor: pointer;
+        }
+
+        #studyRoute:hover {
+            background-color: #1C1C1C;
+
         }
 
         input[type="text"] {
@@ -111,36 +92,56 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
-    </div>
-    <div id="graphContainer">
-        知识图谱
-        <!--知识图谱展示部分-->
-        <svg width="800" height="600"></svg>
-    </div>
-    <!--    用于显示结点详细内容的框-->
-    <div
-        style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
-        这里是展示的框
-        <span id="xxx"></span>
-        <div>课程名</div>
-        <div>课程简介</div>
-        <div>参考书籍</div>
-    </div>
+        <form align="center" id="study_form" action="post1" method="POST">
+            <input type="text" id="course_input" name="course_name" placeholder="输入您想学习的课程"></input>
+            <button type="submit" id="studyRoute">查询</button>
+        </form>
 
-
+        <div id="graphContainer">
+            学习路线
+            <!--知识图谱展示部分-->
+            <svg width="1000" height="650"></svg>
+        </div>
+        <!-- <div
+            style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
+            这里是展示的框
+            <span id="xxx"></span>
+            <div>课程名</div>
+            <div>课程简介</div>
+            <div>参考书籍</div>
+        </div> -->
+    </div>
+    <script>
+        var nodes1;
+        var links1;
+        var data_nodes;
+        var data_links;
+        // 获取上面的form表单
+        const form = document.getElementById('study_form');
+        // 获取上面的input输入框
+        const input = document.getElementById('course_input');
+        // 获取上面的button按钮
+        const button = document.getElementById('studyRoute');
+        // 给form表单添加点击事件
+        form.addEventListener('submit', function (e) {
+            //阻止默认提交事件
+            e.preventDefault()
+            //获取输入框的值
+            const inputValue = input.value.trim();
+            post = 'post1'
+            // 发送异步POST请求
+            sendRequest(post, inputValue)
+        });
+    </script>
     <!--<script-->
-
-    <script src="http://d3js.org/d3.v5.min.js"></script>
     <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+    <script src="http://d3js.org/d3.v5.min.js"></script>
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>
-    <!-- <script src="./relationExtraction.js"></script>
-    <script src="../entityRecognition.js"></script> -->
     <script src="/static/js/graph.js"></script>
-
 </body>
 
 

@@ -2,13 +2,109 @@
 <html>
 
 <head>
-    <title>Welcome</title>
+    <title>欢迎页面</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* 设置页面高度为视口高度 */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            overflow: hidden;
+            /* 隐藏超出视口的部分 */
+            position: relative;
+        }
+
+        .background {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(to bottom right, #4a6cd4, #8f3f8d);
+            z-index: -1;
+            /* 背景元素放在最底层 */
+        }
+
+        .math-symbols {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("../static/img/math.jpg");
+            /* 用数学符号图片作为背景 */
+            /*background-size: cover;  /* 让背景图片始终填充整个容器 */
+            animation: moveBackground 20s linear infinite;
+            /* 背景动画 */
+        }
+
+        @keyframes moveBackground {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 2000px 2000px;
+                /* 背景移动的距离 */
+            }
+        }
+
+        .content {
+            text-align: center;
+            z-index: 1;
+            /* 内容放在前面 */
+        }
+
+        h1 {
+            font-size: 60px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 36px;
+        }
+
+        .option {
+            margin-top: 20px;
+        }
+
+        button {
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 25px;
+            background-color: #FFEBCD;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #FFDEAD;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome测试</h1>
-    <p>这里是欢迎页面</p>
-    <p>Thank you for registering.</p>
+    <div class="background">
+        <!-- 动态背景元素 -->
+        <div class="math-symbols"></div>
+    </div>
+
+    <div class="content">
+        <h1>欢迎使用平台</h1>
+        <p>在这里你可以...</p>
+        <!-- 添加其他元素、图像等 -->
+        <div class="option">
+            <button onclick="goToIndex()">免费试用</button>
+        </div>
+    </div>
+
+    <script src="/static/js/createreq.js"></script>
 </body>
 
 </html>

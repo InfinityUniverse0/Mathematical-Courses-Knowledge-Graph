@@ -51,36 +51,6 @@
             text-align: center;
         }
 
-        /*调整输入框的样式*/
-        #entityRecognition {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 50px;
-        }
-
-        /*调整输入框的样式*/
-        #relationExtraction {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 100px;
-        }
-
-        /*调整输入框的样式*/
-        #ask {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 150px;
-        }
-
         /*学习路线规划按钮*/
         #studyRoute {
             margin: 10px auto;
@@ -94,9 +64,28 @@
             padding: 8px;
             font-size: 16px;
         }
+
+        #updateBtn {
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #363636;
+            color: #FFC125;
+            border: none;
+            position: absolute;
+            top: 73px;
+            right: 355px;
+            cursor: pointer;
+        }
+
+        #updateBtn:hover {
+            background-color: #1C1C1C;
+        }
     </style>
 
 </head>
+
+<script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
 
 <body>
     <div class="container">
@@ -106,14 +95,39 @@
             <span class="demo" style="font-family:'myfont', cursive"> DEMO</span>
         </div>
         <ul class="button-bar" id="navbar">
-            <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
+            <!-- 课程信息查询(子串匹配)  数学知识查询(模糊匹配)          -->
             <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
-
-
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
+        <form id="hidden_form" action="details" method="POST">
+            <input type="hidden" id="updateInput" name="name" value=""></input>
+            <button type="submit" id="updateBtn">查询详细信息</button>
+        </form>
+
+        <script>
+            var nodes1;
+            var links1;
+            var data_nodes;
+            var data_links;
+            // 获取上面的form表单
+            const form = document.getElementById('hidden_form');
+            // 获取上面的input输入框
+            const input = document.getElementById('updateInput');
+            // 获取上面的button按钮
+            const button = document.getElementById('updateBtn');
+            // 给form表单添加点击事件
+            form.addEventListener('submit', function (e) {
+                //阻止默认提交事件
+                e.preventDefault()
+                //获取输入框的值
+                const inputValue = input.value.trim();
+                post = 'details'
+                // 发送异步POST请求
+                sendRequest(post, inputValue)
+            });
+        </script>
     </div>
     <div id="graphContainer">
         知识图谱
@@ -130,16 +144,18 @@
         <div>参考书籍</div>
     </div>
 
-
+    <script></script>
     <!--<script-->
-
+    <!-- <script>setRawData()</script> -->
     <script src="http://d3js.org/d3.v5.min.js"></script>
-    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+    <!-- <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script> -->
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>
     <!-- <script src="./relationExtraction.js"></script>
     <script src="../entityRecognition.js"></script> -->
     <script src="/static/js/graph.js"></script>
+    <script src="{% static 'js/graph1.js' %}" data-nodes="{{ overview.nodes }}"
+        data-links="{{overview.links}}"></script>
 
 </body>
 

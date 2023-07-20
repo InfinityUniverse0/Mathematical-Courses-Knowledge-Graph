@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
 }
+
 .info-bar {
     /*信息框的背景颜色*/
     background-color: #172d5b;
@@ -11,33 +12,67 @@
     padding: 15px;
     border-bottom: 1px solid #fff;
     height: 35px;
-    width: 100%;
+    width: 120%;
 }
-.demo{
+
+.cssFont_1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 25px;
+    letter-spacing: 0px;
+    word-spacing: 0px;
+    color: #FFC125;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+}
+
+.demo {
     font-size: 25px;
     color: #4592fe;
 }
-.button-bar{
+
+.button-bar {
     list-style-type: none;
     margin-top: 66px;
     padding: 0;
     width: 200px;
     background-color: #444e80;
-    height: 100%; /* 全高 */
-    position: fixed; /* 使它产生粘性，即使在滚动时 */
-    overflow: auto; /* 如果侧栏的内容太多，则启用滚动条 */
+    height: 100%;
+    /* 全高 */
+    position: fixed;
+    /* 使它产生粘性，即使在滚动时 */
+    overflow: auto;
+    /* 如果侧栏的内容太多，则启用滚动条 */
+    display: none;
+    /* 隐藏导航栏 */
+    overflow-y: hidden;
+    /* 隐藏垂直滚动条 */
+    overflow-x: hidden;
 }
-.button-bar li{
+
+.button-bar li {
     /*button的样式*/
     border-bottom: 1px solid #fff;
     padding: 15px 20px;
     font-size: 18px;
     width: 200px;
     background-color: #444e80;
-    color: #FFC125;
+    /* color: #FFC125; */
+    color: #CAE1FF;
     cursor: pointer;
     text-align: left;
 }
+
 .button-bar li:hover {
     background-color: #273062;
+}
+
+#toggleBtn {
+    background-color: #172d5b;
+    font-size: 25px;
+    color: #FFC125;
+    border: none;
+    cursor: pointer;
 }
