@@ -34,7 +34,7 @@
             background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
             background-repeat: no-repeat;
             background-size: 200% 200%;
-            overflow-x: hidden;
+            /* overflow-x: hidden; */
         }
 
         #graphContainer {
@@ -45,7 +45,7 @@
             border: 0px solid #ccc;
             background-color: rgba(255, 255, 255, 0.4);
             position: relative;
-            right: -5px;
+            right: -45px;
             top: 10px;
             text-align: center;
         }
@@ -56,24 +56,13 @@
             width: 800px;
             /*text-align: left;*/
             position: absolute;
-            left: 20px;
             top: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 70px;
-            left: 110px;
+            left: 120px;
             margin-bottom: 70px;
-        }
-
-        /*调整输入框的样式*/
-        #relationExtraction {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 100px;
         }
 
         /*调整输入框的样式*/
@@ -100,17 +89,6 @@
             font-size: 16px;
         }
 
-        /* 显示 查询到的信息文本框*/
-        #queryresultDetails {
-            width: 550px;
-            height: 600px;
-            border: 1px solid gray;
-            position: absolute;
-            top: 260px;
-            left: 235px;
-            background-color: rgba(255, 255, 255, 0.4);
-            text-align: center;
-        }
 
         /*实体查询的输入框样式*/
         #entityInput {
@@ -206,18 +184,18 @@
             left: 850px;
         }
 
-        .courseResults {
+        .fuzzResults {
             margin-top: 20px;
             margin-left: 10px;
             text-align: center;
+            height: 200px;
+            overflow-y: auto;
         }
 
         .fuzzTable {
             margin: 0 auto;
             border-collapse: collapse;
-            width: 600px;
-            height: 300px;
-            overflow-y: auto;
+            width: 400px;
         }
 
         .fuzzTable th,
@@ -230,6 +208,12 @@
         .fuzzTable th {
             background-color: #DDA0DD;
             color: #2F4F4F;
+            position: sticky;
+            /* 固定表头 */
+            top: 0;
+            /* 与容器顶部保持距离 */
+            z-index: 1;
+            /* 提高堆叠顺序 */
         }
     </style>
 </head>
@@ -247,15 +231,15 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick=recognizeEntities()>&#9729 数学猫娘问答</li>
-            <li id="askButton">&#10050 课程总览</li>
+            <li onclick="goToQuestionAnswer">&#9729 数学猫娘问答</li>
+            <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>
     <div id="courseRecognition">
-        <div>
-            <input type="text" class="entityInput1" placeholder="请输入您要查询的课程关键字">
-            <button class="entityButton" onclick="displayCourses()">查询相关课程</button>
-        </div>
+        <form method="POST" action="post1" id="form1">
+            <input type="text" class="entityInput1" placeholder="请输入您要查询的课程关键字" id="course_input">
+            <button class="entityButton" id="course_button">查询相关课程</button>
+        </form>
         <div class="courseResults">
             <table class="courseTable">
                 <thead>
@@ -282,16 +266,42 @@
     </div>
 
     <div id="fuzzquery">
-        <div>
-            <input type="text" class="entityInput2" placeholder="请输入您要查询的数学知识点">
-            <button class="entityButton" onclick="displayCourses()">查询知识点</button>
-        </div>
+        <form method="POST" action="post2" id="form2">
+            <input type="text" class="entityInput2" placeholder="请输入您要查询的数学知识点" id="kn_input">
+            <button class="entityButton" id="kn_button">查询知识点</button>
+        </form>
         <!--知识要点表-->
         <div class="fuzzResults">
             <table class="fuzzTable">
                 <thead>
                     <tr>
-                        <th>属性</th>
+                        <th>相关知识要点</th>
+                    </tr>
+                </thead>
+                <tbody class="fuzzData">
+                    <!-- 这里将动态插入查询到的课程信息 -->
+                </tbody>
+            </table>
+        </div><br>
+        <!--知识模块表-->
+        <div class="fuzzResults">
+            <table class="fuzzTable">
+                <thead>
+                    <tr>
+                        <th>相关知识模块</th>
+                    </tr>
+                </thead>
+                <tbody class="fuzzData">
+                    <!-- 这里将动态插入查询到的课程信息 -->
+                </tbody>
+            </table>
+        </div><br>
+        <!--知识相关课程表-->
+        <div class="fuzzResults">
+            <table class="fuzzTable">
+                <thead>
+                    <tr>
+                        <th>相关课程</th>
                     </tr>
                 </thead>
                 <tbody class="fuzzData">
@@ -300,19 +310,59 @@
             </table>
         </div>
     </div>
-    <!--<div id="queryresultDetails" class="container">-->
-    <!--    查询结果-->
-    <!--    <span id="xxx"></span>-->
-    <!--</div>-->
+    <!--定义课程查询模块的相关变量并发送请求-->
+    <script>
+        var courses = [];
+        // 获取上面的form1表单
+        const form1 = document.getElementById('form1');
+        // 获取上面的input输入框
+        const input1 = document.getElementById('course_input');
+        // 获取上面的button按钮
+        const button1 = document.getElementById('course_button');
+        // 给form1表单添加点击事件
+        form1.addEventListener('submit', function (e) {
+            //阻止默认提交事件
+            e.preventDefault();
+            //获取输入框的值
+            const inputValue = input1.value.trim();
+            post = 'post1'
+            // 发送异步POST请求，课程对应的请求函数
+            sendCourseRequest(post, inputValue)
+        });
+    </script>
+    <!--定义知识查询模块的相关变量并发送请求-->
+    <script>
+        var kn_points = [];
+        var kn_modules = [];
+        var kn_courses = [];
+        // 获取上面的form1表单
+        const form2 = document.getElementById('form2');
+        // 获取上面的input输入框
+        const input2 = document.getElementById('kn_input');
+        // 获取上面的button按钮
+        const button2 = document.getElementById('kn_button');
+        form2.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const inputValue = input2.value.trim();
+            post = 'post2'
+            // 发送异步POST请求，知识点对应的请求函数
+            sendKnowRequest(post, inputValue)
+        });
+    </script>
+    <!--实现查询课程后同步显示关系图谱-->
+    <script>
+        function handleCourseNames(courseName) {
+            // 回调利用courseName
+            console.log(courseName);
+            post = 'post3'
+            sendRequest(post, courseName)
+        }
+    </script>
 
-    <!--<div id="graphContainer">-->
-    <!--    相关图谱-->
-    <!--</div>-->
-    <!-- <script type="text/javascript" src="/static/js/drawnodes.js"></script> -->
     <script src="/static/js/createreq.js"></script>
     <script src="/static/js/tables.js"></script>
     <script src="http://d3js.org/d3.v5.min.js"></script>
-    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+    <!--    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>-->
     <script src="/static/js/toggle.js"></script>
     <!-- <script src="/relationExtraction.js"></script>
     <script src="../entityRecognition.js"></script> -->

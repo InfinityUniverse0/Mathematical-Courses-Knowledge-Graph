@@ -16,13 +16,24 @@ function goToQuery() {
     // 修改路径部分
     // var newUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/") + 1) + "info_query";
     //console.log(newUrl)
-    newUrl = "/kg/info_query"
+    newUrl = "http://127.0.0.1:8000/kg/info_query/"
     // 跳转到新的URL（GET请求）
     window.location.href = newUrl;
 }
 
 function goToStudyRoute() {
-    newUrl = "/kg/study_route"
+    newUrl = "http://127.0.0.1:8000/kg/study_route/"
+    // 跳转到新的URL（GET请求）
+    window.location.href = newUrl;
+}
+
+function goToCoursesOverview() {
+    newUrl = "http://127.0.0.1:8000/kg/courses_overview/"
+    // 跳转到新的URL（GET请求）/
+    window.location.href = newUrl;
+}
+function goToQuestionAnswer() {
+    newUrl = "http://127.0.0.1:8000/qa/question_answer/"
     // 跳转到新的URL（GET请求）
     window.location.href = newUrl;
 }

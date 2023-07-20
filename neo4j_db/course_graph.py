@@ -10,6 +10,7 @@ from os.path import join
 import pandas as pd
 from copy import deepcopy
 
+
 class CourseGraph():
     '''
     高等教育数学课程图谱
@@ -21,7 +22,7 @@ class CourseGraph():
         'auth': ('neo4j', '12345678')
     }
 
-    def __init__(self, profile = config['profile'], auth = config['auth']):
+    def __init__(self, profile=config['profile'], auth=config['auth']):
         '''
         初始化
         '''
@@ -31,8 +32,8 @@ class CourseGraph():
         self.config['auth'] = auth
 
         # 图数据库
-        self.graph = Graph(profile, auth = auth)
-    
+        self.graph = Graph(profile, auth=auth)
+
     def initial(self):
         '''
         初始化图数据库中的 架构(节点 & 关系) 和 数据
@@ -62,7 +63,7 @@ class CourseGraph():
         for _, row in course_module.iterrows():
             node = Node('课程模块', **row)
             self.graph.create(node)
-        
+
         # 2. 初始化`课程`节点
         course = pd.read_csv(join(path, '课程.csv'))
         for _, row in course.iterrows():
@@ -82,23 +83,27 @@ class CourseGraph():
             # 增加`课程`节点与`课程模块`节点的关系
             tags = row['tags'].split('|')
             for tag in tags:
-                course_module = NodeMatcher(self.graph).match('课程模块', name = tag).first()
+                course_module = NodeMatcher(self.graph).match(
+                    '课程模块', name=tag).first()
                 rel = Relationship(node, '类别', course_module)
                 self.graph.create(rel)
-        
+
         # 3. 初始化课程之间的先导关系
-        pre_courses_relationship = pd.read_csv(join(path, '课程.csv'))[['name', 'pre_courses']]
+        pre_courses_relationship = pd.read_csv(join(path, '课程.csv'))[
+            ['name', 'pre_courses']]
         for _, row in pre_courses_relationship.iterrows():
-            course = NodeMatcher(self.graph).match('课程', name = row['name']).first()
+            course = NodeMatcher(self.graph).match(
+                '课程', name=row['name']).first()
             # `pre_courses`列可能为空
             if not pd.isna(row['pre_courses']):
                 # `pre_courses`列的数据格式为字符串，每门课程以`|`分割
                 pre_courses = row['pre_courses'].split('|')
                 for pre_course in pre_courses:
-                    pre_course = NodeMatcher(self.graph).match('课程', name = pre_course).first()
+                    pre_course = NodeMatcher(self.graph).match(
+                        '课程', name=pre_course).first()
                     rel = Relationship(course, '先导', pre_course)
                     self.graph.create(rel)
-        
+
         # 4. 初始化`知识模块`节点
         knowledge_module = pd.read_csv(join(path, '知识模块.csv'))
         for _, row in knowledge_module.iterrows():
@@ -109,10 +114,11 @@ class CourseGraph():
             node = Node('知识模块', **attrs)
             self.graph.create(node)
             # 增加`知识模块`节点与`课程`节点的关系
-            course = NodeMatcher(self.graph).match('课程', name = row['course']).first()
+            course = NodeMatcher(self.graph).match(
+                '课程', name=row['course']).first()
             rel = Relationship(node, '属于', course)
             self.graph.create(rel)
-        
+
         # 5. 将同一`课程`的`知识模块`按照`no`列从小到大的顺序连接起来
         course = pd.read_csv(join(path, '课程.csv'))
         for _, row in course.iterrows():
@@ -127,7 +133,7 @@ class CourseGraph():
             Create p = (n)-[:`下一模块`]->(m)
             '''.format(course_name)
             self.graph.run(match)
-        
+
         # 6. 初始化`知识要点`节点
         knowledge_point = pd.read_csv(join(path, '知识要点.csv'))
         for _, row in knowledge_point.iterrows():
@@ -144,20 +150,21 @@ class CourseGraph():
             Where n.name = $module and m.name = $course
             Return n
             '''
-            knowledge_module = self.graph.run(cypher, module = row['module'], course = row['course']).data()[0]['n']
+            knowledge_module = self.graph.run(
+                cypher, module=row['module'], course=row['course']).data()[0]['n']
             rel = Relationship(node, '含于', knowledge_module)
             self.graph.create(rel)
-            
+
         # 7. 初始化`数学人物`节点
         # math_person = pd.read_csv(join(path, '数学人物.csv'))
         # for _, row in math_person.iterrows():
         #     node = Node('数学人物', **row)
         #     self.graph.create(node)
-        
+
         # 8. 待定：数学人物与知识要点的关系
         pass
 
-    def create_node(self, tag, attrs = {}):
+    def create_node(self, tag, attrs={}):
         '''
         增加节点操作：向图数据库中增加一个节点
         - 若标签`tag`不满足要求，抛出`ValueError`异常
@@ -167,7 +174,7 @@ class CourseGraph():
 
         :return `py2neo.data.Node`
         '''
-        
+
         if tag in ['课程模块', '课程', '知识模块', '知识要点', '数学人物']:
             # 设置标签及属性
             node = Node(tag, **attrs)
@@ -175,14 +182,15 @@ class CourseGraph():
             self.graph.create(node)
             # 返回Node
             return node
-        raise ValueError("节点的标签必须是 `['课程模块', '课程', '知识模块', '知识要点', '数学人物']` 其中之一")
-    
-    def create_relationship(self, node_start, node_end, tag, attrs = {}):
+        raise ValueError(
+            "节点的标签必须是 `['课程模块', '课程', '知识模块', '知识要点', '数学人物']` 其中之一")
+
+    def create_relationship(self, node_start, node_end, tag, attrs={}):
         '''
         增加关系操作：向图数据库中增加一条关系边(有向边)
         - tips: 使用前，可以先自行创建`py2neo.data.Node`作为节点参数传入
         - 若节点不满足要求，抛出`ValueError`异常
-        
+
         :params `node_start` 关系边的起点，`py2neo.data.Node`类型
         :params `node_end` 关系边的终点，`py2neo.data.Node`类型
         :params `tag` 增加的关系的标签
@@ -193,8 +201,10 @@ class CourseGraph():
 
         # 匹配首尾节点
         matcher = NodeMatcher(self.graph)
-        node_s = matcher.match(str(node_start.labels).split(':')[1], **dict(node_start.items())).first()
-        node_t = matcher.match(str(node_end.labels).split(':')[1], **dict(node_end.items())).first()
+        node_s = matcher.match(str(node_start.labels).split(
+            ':')[1], **dict(node_start.items())).first()
+        node_t = matcher.match(str(node_end.labels).split(
+            ':')[1], **dict(node_end.items())).first()
 
         if node_s and node_t:
             # 设置关系的标签及属性
@@ -204,18 +214,18 @@ class CourseGraph():
             # 返回
             return relationship
         raise ValueError("无效的节点！")
-    
+
     def exec_cypher(self, cypher):
         '''
         执行Cypher语句
 
         :params `cypher` 待执行的Cypher语句
-        
+
         :return `py2neo.cypher.Cursor`
         '''
 
         return self.graph.run(cypher)
-    
+
 
 # 用于测试：
 if __name__ == '__main__':

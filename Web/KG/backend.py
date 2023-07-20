@@ -32,7 +32,7 @@ def init_neo4j():
     return Graph(config['profile'], auth=config['auth'])
 
 
-def nodes_to_list(cursor_node):
+def nodes_to_list(cursor_node, table=False):
     '''将py2neo.Node对象转换为点集'''
     node_list = []
     cursor = cursor_node
@@ -40,12 +40,24 @@ def nodes_to_list(cursor_node):
         node = node['n']
         node_dict = {
             'id': node.identity,
-            'level': level_dict[list(node.labels)[0]]
+            'level': level_dict[list(node.labels)[0]],
+            'name': node['name']
         }
-        for key in node.keys():
-            node_dict[key] = node[key]
+        if table:
+            node_dict.update({
+                'refer': node['references'],
+                'intro': node['intro']
+            })
         node_list.append(node_dict)
     return node_list
+
+# 节点集去重
+def unique_nodes(node_list):
+    unique_list = []
+    for node in node_list:
+        if node not in unique_list:
+            unique_list.append(node)
+    return unique_list
 
 
 def paths_to_list(cursor_path):
@@ -53,6 +65,8 @@ def paths_to_list(cursor_path):
     path_list, node_list = [], []
     cursor = cursor_path
     for p in cursor:
+        if p['p'] is None:
+            continue
         path, relation = p['p'], p['r']
         start_node, end_node = path.start_node, path.end_node
         node_list.append({'n': start_node})
@@ -69,3 +83,15 @@ def paths_to_list(cursor_path):
         }
         path_list.append(path_dict)
     return path_list, nodes_to_list(node_list)
+
+
+# 边集去重
+def unique_paths(path_list):
+    unique_list = []
+    edges = []
+    for path in path_list:
+        edge = (path['source'], path['target'], path['relation'])
+        if edge not in edges:
+            unique_list.append(path)
+            edges.append(edge)
+    return unique_list

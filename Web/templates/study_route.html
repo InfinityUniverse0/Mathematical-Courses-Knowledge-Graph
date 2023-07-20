@@ -92,8 +92,8 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick=recognizeEntities()>&#9729 数学猫娘问答</li>
-            <li id="askButton">&#10050 课程总览</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
         <form align="center" id="study_form" action="post1" method="POST">
             <input type="text" id="course_input" name="course_name" placeholder="输入您想学习的课程"></input>
@@ -105,6 +105,14 @@
             <!--知识图谱展示部分-->
             <svg width="1000" height="650"></svg>
         </div>
+        <!-- <div
+            style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
+            这里是展示的框
+            <span id="xxx"></span>
+            <div>课程名</div>
+            <div>课程简介</div>
+            <div>参考书籍</div>
+        </div> -->
     </div>
     <script>
         var nodes1;
@@ -129,7 +137,7 @@
         });
     </script>
     <!--<script-->
-
+    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
     <script src="http://d3js.org/d3.v5.min.js"></script>
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>

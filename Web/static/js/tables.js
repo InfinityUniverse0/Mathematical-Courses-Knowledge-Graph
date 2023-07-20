@@ -1,123 +1,223 @@
-// 模拟的查询结果数据，用于示例
-    var courses = [
-        { name: '高等代数 II', description: '让学生加深对线性代数的理解，能够把上学期学过的具体概念，演算应用到跟一般的线性空间，线性变换，双线性函数，同时能利用抽象的线性空间，线性变换，双线性函数等概念来解决具体的问题。', textbook: '北京大学数学力学系几何与代数教研室代数小组：高等代数，高等教育出版社，1984（第6 次印刷）。|蓝以中：高等代数简明教程（上册），北京大学出版社，2003（第 2 次印刷）。|丘维声：高等代数（第二版）上册，高等教育出版社，2002 年。' },
-        { name: '课程1', description: '课程2介绍', textbook: '教材2' },
-        { name: '课程1', description: '课程3介绍', textbook: '教材3' },
-        { name: '课程1', description: '课程4介绍', textbook: '教材4' },
-        { name: '课程1', description: '课程5介绍', textbook: '教材5' }
-    ];
+var currentPage = 1;
+var coursesPerPage = 1; // 每页显示的课程数量
+/* 产生查询课程的异步请求 */
+function sendCourseRequest(post, inputValue) {
+    fetch(post, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({
+            name: inputValue
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            setCourseData(data.search)
+        })
+        .catch(error => {
+            console.log('请求失败:', error);
+        });
+}
 
-    var currentPage = 1;
-    var coursesPerPage = 1; // 每页显示的课程数量
+function sendKnowRequest(post, inputValue) {
+    fetch(post, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({
+            name: inputValue
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            setKnowData(data.search)
+        })
+        .catch(error => {
+            console.log('请求失败:', error);
+        });
+}
 
-    function displayCourses() {
-        var input1 = document.querySelector('.entityInput1');
-        //var input2 = document.querySelector('.entityInput2');
-        var keyword1 = input1.value;
-        //var keyword2 = input2.value;
-        var filteredCourses = [];
-
-        if (keyword1 !== '') {
-            // 根据课程关键字查询课程
-            filteredCourses = courses.filter(function (course) {
-                return course.name.toLowerCase().includes(keyword1.toLowerCase());
+function setCourseData(Data) {
+    if (Data) {
+        data_string = Data.nodes;
+        data_courses = JSON.parse(data_string);
+        /*对数据进行清洗，筛选出课程节点，同时根据id键去重*/
+        if (data_courses) {
+            var idSet = new Set();
+            courses = data_courses.filter(function (item) {
+                if ('refer' in item && !idSet.has(item.id)) {
+                    idSet.add(item.id);
+                    return true;
+                }
+                return false;
             });
         }
-//        else if (keyword2 !== '') {
-//            // 根据数学知识点查询课程
-//            filteredCourses = courses.filter(function (course) {
-//                return course.description.toLowerCase().includes(keyword2.toLowerCase());
-//            });
-//        }
-
-        // 更新表格数据
+        currentPage = 1; // 将当前页设置为1
+        sendRequest('post3', courses[0].name)
+        displayCourses(courses);
+    }
+    /* 若查询不到信息，则清空当前表格 */
+    else {
+        // 清空表格数据
         var courseData = document.getElementsByClassName('courseData')[0];
         courseData.innerHTML = '';
-
-        if (filteredCourses.length > 0) {
-            // 计算当前页起始和结束索引
-            var startIndex = (currentPage - 1) * coursesPerPage;
-            var endIndex = startIndex + coursesPerPage;
-
-            // 循环添加当前页的课程数据
-            for (var i = startIndex; i < endIndex && i < filteredCourses.length; i++) {
-                var course = filteredCourses[i];
-                var row = document.createElement('tr');
-                var nameCell = document.createElement('td');
-                var descriptionCell = document.createElement('td');
-                var textbookCell = document.createElement('td');
-
-                nameCell.textContent = course.name;
-                descriptionCell.textContent = course.description;
-                textbookCell.textContent = course.textbook;
-
-                row.appendChild(nameCell);
-                row.appendChild(descriptionCell);
-                row.appendChild(textbookCell);
-
-                courseData.appendChild(row);
-            }
-
-            // 更新分页按钮状态
-            var pagination = document.querySelector('.pagination');
-            pagination.style.display = 'block';
-            var previousButton = pagination.querySelector('button:first-child');
-            var nextButton = pagination.querySelector('button:last-child');
-            var pageInfo = document.getElementById('pageInfo');
-            pageInfo.textContent = currentPage + '/' + Math.ceil(filteredCourses.length / coursesPerPage);
-
-            if (currentPage === 1) {
-                previousButton.disabled = true;
-            } else {
-                previousButton.disabled = false;
-            }
-
-            if (endIndex >= filteredCourses.length) {
-                nextButton.disabled = true;
-            } else {
-                nextButton.disabled = false;
-            }
-        }
-//        else {
-//            // 如果没有查询到课程，隐藏分页按钮
-//            var pagination = document.querySelector('.pagination');
-//            pagination.style.display = 'none';
-//        }
+        // 隐藏分页按钮
+        var pagination = document.querySelector('.pagination');
+        pagination.style.display = 'none';
     }
+}
 
-    function previousPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            displayCourses();
+function setKnowData(Data) {
+    if (Data) {
+        if (Data.point) {
+            kn_points = Data.point;
+        } else {
+            var knData0 = document.getElementsByClassName('fuzzData')[0];
+            knData0.innerHTML = '';
         }
+        if (Data.module) {
+            kn_modules = Data.module;
+        } else {
+            var knData1 = document.getElementsByClassName('fuzzData')[1];
+            knData1.innerHTML = '';
+        }
+        if (Data.course) {
+            kn_courses = Data.course;
+        } else {
+            var knData2 = document.getElementsByClassName('fuzzData')[2];
+            knData2.innerHTML = '';
+        }
+        console.log(kn_points[0]);
+        //    console.log(kn_modules);
+        //    console.log(kn_courses);
+        displayknpoint(kn_points, kn_modules, kn_courses);
     }
+}
 
-    function nextPage() {
-        var input1 = document.querySelector('.entityInput1');
-        //var input2 = document.querySelector('.entityInput2');
-        var keyword1 = input1.value;
-        //var keyword2 = input2.value;
-        var filteredCourses = [];
 
-        if (keyword1 !== '') {
-            // 根据课程关键字查询课程
-            filteredCourses = courses.filter(function (course) {
-                return course.name.toLowerCase().includes(keyword1.toLowerCase());
-            });
-        }
-//        else if (keyword2 !== '') {
-//            // 根据数学知识点查询课程
-//            filteredCourses = courses.filter(function (course) {
-//                return course.description.toLowerCase().includes(keyword2.toLowerCase());
-//            });
-//        }
-
+function displayCourses(Courses, callback) {
+    // 更新表格数据
+    var courseData = document.getElementsByClassName('courseData')[0];
+    courseData.innerHTML = '';
+    if (Courses.length > 0) {
         // 计算当前页起始和结束索引
-        var startIndex = currentPage * coursesPerPage;
+        var startIndex = (currentPage - 1) * coursesPerPage;
         var endIndex = startIndex + coursesPerPage;
 
-        if (endIndex <= filteredCourses.length) {
-            currentPage++;
-            displayCourses();
+        // 循环添加当前页的课程数据
+        for (var i = startIndex; i < endIndex && i < Courses.length; i++) {
+            var course = Courses[i];
+            var row = document.createElement('tr');
+            var nameCell = document.createElement('td');
+            var descriptionCell = document.createElement('td');
+            var textbookCell = document.createElement('td');
+
+            nameCell.textContent = course.name;
+            descriptionCell.textContent = course.intro;
+            textbookCell.textContent = course.refer;
+
+            row.appendChild(nameCell);
+            row.appendChild(descriptionCell);
+            row.appendChild(textbookCell);
+
+            courseData.appendChild(row);
+            /* 回调函数获取到当前表格的课程姓名 */
+            if (typeof callback === 'function') {
+                var courseName = course.name;
+                callback(courseName);
+            }
+        }
+
+        // 更新分页按钮状态
+        var pagination = document.querySelector('.pagination');
+        pagination.style.display = 'block';
+        var previousButton = pagination.querySelector('button:first-child');
+        var nextButton = pagination.querySelector('button:last-child');
+        var pageInfo = document.getElementById('pageInfo');
+        pageInfo.textContent = currentPage + '/' + Math.ceil(Courses.length / coursesPerPage);
+
+        if (currentPage === 1) {
+            previousButton.disabled = true;
+        } else {
+            previousButton.disabled = false;
+        }
+
+        if (endIndex >= Courses.length) {
+            nextButton.disabled = true;
+        } else {
+            nextButton.disabled = false;
         }
     }
+}
+
+function displayknpoint(kn_points, kn_modules, kn_courses) {
+    // 更新知识要点表格数据
+    var knData0 = document.getElementsByClassName('fuzzData')[0];
+    knData0.innerHTML = '';
+
+    if (kn_points.length > 0) {
+        // 循环添加当前知识要点
+        for (var i = 0; i < kn_points.length; i++) {
+            var point = kn_points[i];
+            var row = document.createElement('tr');
+            var pointCell = document.createElement('td');
+            pointCell.textContent = point;
+            row.appendChild(pointCell);
+            knData0.appendChild(row);
+        }
+    }
+
+    // 更新知识模块表格数据
+    var knData1 = document.getElementsByClassName('fuzzData')[1];
+    knData1.innerHTML = '';
+
+    if (kn_modules.length > 0) {
+        // 循环添加当前知识要点
+        for (var i = 0; i < kn_modules.length; i++) {
+            var module = kn_modules[i];
+            var row = document.createElement('tr');
+            var moduleCell = document.createElement('td');
+            moduleCell.textContent = module;
+            row.appendChild(moduleCell);
+            knData1.appendChild(row);
+        }
+    }
+
+    // 更新知识课程表格数据
+    var knData2 = document.getElementsByClassName('fuzzData')[2];
+    knData2.innerHTML = '';
+
+    if (kn_courses.length > 0) {
+        // 循环添加当前知识要点
+        for (var i = 0; i < kn_courses.length; i++) {
+            var course = kn_courses[i];
+            var row = document.createElement('tr');
+            var courseCell = document.createElement('td');
+            courseCell.textContent = course;
+            row.appendChild(courseCell);
+            knData2.appendChild(row);
+        }
+    }
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        /*调用回调函数，显示当前courseName*/
+        displayCourses(courses, handleCourseNames);
+    }
+}
+
+function nextPage() {
+    var startIndex = currentPage * coursesPerPage;
+    var endIndex = startIndex + coursesPerPage;
+    if (endIndex <= courses.length) {
+        currentPage++;
+        /*调用回调函数，显示当前courseName*/
+        displayCourses(courses, handleCourseNames);
+    }
+}
