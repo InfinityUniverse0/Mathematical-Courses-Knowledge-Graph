@@ -20,7 +20,11 @@ function goToQuery() {
     // 跳转到新的URL（GET请求）
     window.location.href = newUrl;
 }
-
+function goToIndex() {
+    newUrl = "http://127.0.0.1:8000/kg/index/"
+    // 跳转到新的URL（GET请求）
+    window.location.href = newUrl;
+}
 function goToStudyRoute() {
     newUrl = "http://127.0.0.1:8000/kg/study_route/"
     // 跳转到新的URL（GET请求）
