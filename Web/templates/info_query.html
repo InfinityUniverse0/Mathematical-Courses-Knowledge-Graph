@@ -34,7 +34,7 @@
             background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
             background-repeat: no-repeat;
             background-size: 200% 200%;
-            overflow-x: hidden;
+            /* overflow-x: hidden; */
         }
 
         #graphContainer {
@@ -208,9 +208,12 @@
         .fuzzTable th {
             background-color: #DDA0DD;
             color: #2F4F4F;
-            position: sticky; /* 固定表头 */
-            top: 0; /* 与容器顶部保持距离 */
-            z-index: 1; /* 提高堆叠顺序 */
+            position: sticky;
+            /* 固定表头 */
+            top: 0;
+            /* 与容器顶部保持距离 */
+            z-index: 1;
+            /* 提高堆叠顺序 */
         }
     </style>
 </head>
@@ -228,14 +231,14 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQA()">&#9729 数学猫娘问答</li>
-            <li id="askButton">&#10050 课程总览</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>
     <div id="courseRecognition">
-        <form method="POST" action="post1" id="form1">
+        <form method="POST" id="form1">
             <input type="text" class="entityInput1" placeholder="请输入您要查询的课程关键字" id="course_input">
-            <button class="entityButton"  id="course_button">查询相关课程</button>
+            <button class="entityButton" id="course_button">查询相关课程</button>
         </form>
         <div class="courseResults">
             <table class="courseTable">
@@ -263,9 +266,9 @@
     </div>
 
     <div id="fuzzquery">
-        <form method="POST" action="post2" id="form2">
+        <form method="POST" id="form2">
             <input type="text" class="entityInput2" placeholder="请输入您要查询的数学知识点" id="kn_input">
-            <button class="entityButton"   id="kn_button">查询知识点</button>
+            <button class="entityButton" id="kn_button">查询知识点</button>
         </form>
         <!--知识要点表-->
         <div class="fuzzResults">
@@ -307,7 +310,7 @@
             </table>
         </div>
     </div>
-<!--定义课程查询模块的相关变量并发送请求-->
+    <!--定义课程查询模块的相关变量并发送请求-->
     <script>
         var courses = [];
         // 获取上面的form1表单
@@ -327,7 +330,7 @@
             sendCourseRequest(post, inputValue)
         });
     </script>
-<!--定义知识查询模块的相关变量并发送请求-->
+    <!--定义知识查询模块的相关变量并发送请求-->
     <script>
         var kn_points = [];
         var kn_modules = [];
@@ -338,7 +341,7 @@
         const input2 = document.getElementById('kn_input');
         // 获取上面的button按钮
         const button2 = document.getElementById('kn_button');
-        form2.addEventListener('submit',function(e){
+        form2.addEventListener('submit', function (e) {
             e.preventDefault();
             const inputValue = input2.value.trim();
             post = 'post2'
@@ -346,20 +349,23 @@
             sendKnowRequest(post, inputValue)
         });
     </script>
-<!--实现查询课程后同步显示关系图谱-->
+    <!--实现查询课程后同步显示关系图谱-->
     <script>
         function handleCourseNames(courseName) {
             // 回调利用courseName
             console.log(courseName);
             post = 'post3'
-            sendRequest(post,courseName)
+            sendRequest(post, courseName)
         }
     </script>
 
     <script src="/static/js/createreq.js"></script>
     <script src="/static/js/tables.js"></script>
     <script src="http://d3js.org/d3.v5.min.js"></script>
+    <!--    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>-->
     <script src="/static/js/toggle.js"></script>
+    <!-- <script src="/relationExtraction.js"></script>
+    <script src="../entityRecognition.js"></script> -->
     <script src="/static/js/graph.js"></script>
 
 </body>

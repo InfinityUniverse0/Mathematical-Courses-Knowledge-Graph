@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta maximum-scale=1.0, user-scalable=0>
+    <title>数学知识图谱展示</title>
+    <style>
+        /* CSS样式 */
+        @import "/static/css/option.css";
+
+        @font-face {
+            font-family: 'myfont';
+            src: url("/static/fonts/fonts2.woff2") format("woff2"),
+                url("/static/fonts/glyphicons-halflings-regular.woff") format("woff");
+            font-weight: 400;
+            font-display: auto;
+            font-style: normal;
+        }
+
+        /* 用于功能选择菜单的样式构建 */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #E8E8E8;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+
+        #graphContainer {
+            border-radius: 5px;
+            width: 1000px;
+            height: 660px;
+            margin: 16px auto;
+            border: 0px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.4);
+            /* position: absolute;
+            right: 20px;
+            top: 100px; */
+            text-align: center;
+        }
+
+        /*学习路线规划按钮*/
+        #studyRoute {
+            margin: 10px auto;
+            /* position: absolute; */
+            border-radius: 7px;
+            padding: 8px 16px;
+            font-size: 16px;
+            top: 80px;
+            background-color: #363636;
+            color: #FFC125;
+            border: none;
+            cursor: pointer;
+        }
+
+        #studyRoute:hover {
+            background-color: #1C1C1C;
+
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        #chat-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 40px;
+            color: #273062;
+            font-family: Segoe Print;
+            font-size: 30pt;
+        }
+
+        /* 输入框美化 */
+        #user-input {
+            width: 400px;
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease; /* 添加过渡效果 */
+        }
+
+        #user-input::placeholder {
+            color: #ccc;
+        }
+
+        #user-input:focus {
+            border-color: #8B008B; /* 输入框获取焦点时的边框颜色 */
+        }
+
+        /* 按钮美化 */
+        button[type="submit"] {
+            background-color: #8B008B;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
+            outline: none;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #9932CC; /* 鼠标悬停时的背景颜色 */
+        }
+
+        button[type="submit"]:active {
+            background-color: #800080; /* 鼠标点击时的背景颜色 */
+        }
+
+        #chat-output {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.4);
+            /* 背景颜色与页面背景一致 */
+            /* 移除边框样式 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border-radius: 15px;
+            /*让边框变为圆角*/
+            border: 1px solid gray;
+            display: flex;
+            flex-direction: column;
+            /* 使用Flex布局，垂直方向排列 */
+            font-family: Arial, sans-serif;
+            /* 更改字体样式 */
+            font-size: 19px;
+            /* 更改字体大小 */
+            line-height: 1.5;
+            /* 调整行距 */
+            color: #333;
+            /* 更改字体颜色 */
+        }
+
+        .message .icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .message .icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .user-message,
+        .chatgpt-message {
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .user-message {
+            background-color: #e0f0ff;
+        }
+
+        .chatgpt-message {
+            background-color: #f0e0ff;
+        }
+
+        /* 添加样式美化聊天回答 */
+        .chatgpt-message::before {
+            content: "AI: ";
+            font-weight: bold;
+            color: #8B008B;
+        }
+
+        .user-message::before {
+            content: "你: ";
+            font-weight: bold;
+            color: #008080;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="info-bar">
+            <button id="toggleBtn" onclick=displayBar()>&#9776</button>
+            <span class="cssFont_1" style="font-family:'myfont', cursive">Mathematic Knowledge Graph</span>
+            <span class="demo" style="font-family:'myfont', cursive"> DEMO</span>
+        </div>
+        <ul class="button-bar" id="navbar">
+            <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
+            <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
+            <li onclick="goToStudyRoute()">&#1421 学习路线</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
+        </ul>
+    </div>
+    <!--    布局问答输入框-->
+    <h1>Question Answering</h1>
+    <form id="chat-form" method="POST">
+        <input type="text" id="user-input" placeholder="请输入您的问题" autocomplete="off">
+        <button type="submit">回答</button>
+    </form>
+    <div id="chat-output"></div>
+
+    <script>
+        // 使用JavaScript处理聊天逻辑
+        const form = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatOutput = document.getElementById('chat-output');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // 获取用户输入的消息
+            const message = userInput.value.trim();
+
+            // 将用户消息添加到聊天界面中
+            appendMessage('user', message);
+
+            post = 'question_answer/chat';
+            // 发送用户消息到服务器
+            sendUserMessage(post, message);
+
+            // 清空用户输入框
+            userInput.value = '';
+        });
+
+    </script>
+
+    <script src="/static/js/chat.js"></script>
+
+    <!--导入所需的javascript文件-->
+    <script src="/static/js/createreq.js"></script>
+    <script src="/static/js/toggle.js"></script>
+</body>
+
+</html>
