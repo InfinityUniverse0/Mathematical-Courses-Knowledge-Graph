@@ -115,7 +115,7 @@ STATIC_URL = "/static/"
 
 # 静态资源
 STATICFILES_DIRS = [
-os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # DEBUG = False 模型下加载静态资源的变量

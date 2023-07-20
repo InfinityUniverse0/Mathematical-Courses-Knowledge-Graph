@@ -31,30 +31,3 @@ def index_page(request):
     return render(request, 'index.html')
 
 
-# 聊天页面
-# - 暂时存放在此,以后可能会迁移到其他应用下
-'''def chat(request):
-    if request.method == 'POST':
-        body = request.body.decode('utf-8')
-
-        try:
-            data = json.loads(body)
-            message = data.get('message')
-        except json.JSONDecodeError:
-            return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
-
-        try:
-            response = openai.ChatCompletion.create(
-                model='gpt-3.5-turbo',
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {'role': 'user', 'content': message}
-                ]
-            )
-            completion = response['choices'][0]['message']['content']
-        except Exception as e:
-            completion = 'ERROR: ' + str(e)
-
-        return JsonResponse({'completion': completion})
-
-    return render(request, 'chat.html')'''

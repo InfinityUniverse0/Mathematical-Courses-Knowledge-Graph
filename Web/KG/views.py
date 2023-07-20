@@ -191,6 +191,8 @@ def learn_path(request):
         try:
             data = json.loads(body)
             course_name = data['name']
+            if course_name == '':
+                return JsonResponse({'ERROR': 'Empty JSON data.'}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'ERROR': 'Invalid JSON data.'}, status=400)
         # 寻找课程节点，可以有多个
@@ -199,7 +201,7 @@ def learn_path(request):
                  RETURN n'''.format(course_name)
         cursor = graph.run(cypher).data()
         node_list = nodes_to_list(cursor)
-        node_other = []
+        path_list, node_other = [], []
         for node in node_list:
             cypher = '''
                     MATCH (n)
@@ -209,8 +211,11 @@ def learn_path(request):
                     RETURN p, r
                       '''.format(node['id'])
             cursor = graph.run(cypher).data()
-            path_list, nodes = paths_to_list(cursor)
+            paths, nodes = paths_to_list(cursor)
+
             node_other.extend(nodes)
+            path_list.extend(paths)
+
         node_list.extend(node_other)
 
         # 去重处理
