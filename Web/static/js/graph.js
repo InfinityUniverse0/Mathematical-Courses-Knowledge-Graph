@@ -1,5 +1,3 @@
-// const btn2 = document.getElementById("all_course");
-// btn2.addEventListener("click", setRawData);
 function update_data(value) {
     document.getElementById('updateInput').value = value;
 
@@ -70,10 +68,7 @@ function graphDisplay(data_nodes, data_links) {
     let linkMap = genLinkMap(tempEdges)
     // 构建 links（source 属性必须从 0 开始）
     edges = genLinks(tempEdges);
-    // 设置一个颜色比例尺
-    let colorScale = d3.scaleOrdinal()
-        .domain(d3.range(nodesData.length))
-        .range(d3.schemeCategory10)
+
     // 新建一个力导向图
     let forceSimulation = d3.forceSimulation()
         .force('link', d3.forceLink())
@@ -92,7 +87,8 @@ function graphDisplay(data_nodes, data_links) {
         .x(width / 2)
         .y(height / 2)
     // 箭头
-    var marker = g.append('g').attr('class', 'showLine').append('marker')
+    var marker = g.append('g')
+        .attr('class', 'showLine').append('marker')
         .attr('id', 'resolved')
         // .attr("markerUnits","strokeWidth")// 设置为strokeWidth箭头会随着线的粗细发生变化
         .attr('markerUnits', 'userSpaceOnUse')
@@ -106,8 +102,10 @@ function graphDisplay(data_nodes, data_links) {
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5')// 箭头的路径
         .attr('fill', '#000000')// 箭头颜色
+
     // 绘制边
-    let links = g.append('g').selectAll('path')
+    let links = g.append('g')
+        .selectAll('path')
         .data(edges)
         .enter()
         .append('path')
@@ -117,6 +115,7 @@ function graphDisplay(data_nodes, data_links) {
         .style('stroke-width', 2) // 粗细
         .attr('class', 'lines')
         .attr('marker-end', 'url(#resolved)') // 根据箭头标记的id号标记箭头
+
     // 边上的文字
     let linksText = g.append('g')
         .selectAll('text')
@@ -129,6 +128,7 @@ function graphDisplay(data_nodes, data_links) {
         })
         .style('font-size', 14)
         .attr('fill-opacity', 0)
+
     // 创建结点分组，用于绘图
     let gs = g.append('g')
         .selectAll('.circleText')
@@ -145,6 +145,7 @@ function graphDisplay(data_nodes, data_links) {
             let cirY = d.y
             return 'translate(' + cirX + ',' + cirY + ')'
         })
+
     // 鼠标交互
 
     gs.on('mouseover', function (d, i) {
@@ -193,15 +194,18 @@ function graphDisplay(data_nodes, data_links) {
         .attr('fill', function (d, i) {
             //为不同层级的结点绘制不同的颜色
             if (d.level === 0) {
+                // return '#FF3333';
                 return '#00EE76';
             } else if (d.level === 1) {
-                return '#F0FFF0';
+                return '#00FFFF';
+                // return '#F0FFF0';
             } else if (d.level === 2) {
+                // return '#33FF33';
                 return 'pink';
             } else {
+                // return '#FFB7DD';
                 return '#B0E2FF';
             }
-            // return '#00EE76';
         })
         .attr('stroke', 'grey')
         .attr('stroke-width', 3)
@@ -363,7 +367,7 @@ function graphDisplay(data_nodes, data_links) {
             type: 'showOff'
         }, {
             population: 30,
-            value: '查看详细信息',
+            value: '展开',
             type: 'showDetail'
         }]
         var sum = d3.sum(data.map(function (d) {
@@ -724,11 +728,13 @@ function graphDisplay(data_nodes, data_links) {
         const hash = {};
         nodes.map(function ({
             id,
-            name
+            name,
+            level
         }) {
             hash[id] = {
                 id,
-                name
+                name,
+                level
             };
         });
         return hash;

@@ -5,7 +5,7 @@
 # 导入所需的模块
 from py2neo import Graph
 from py2neo import Node, Relationship
-from py2neo import NodeMatcher, RelationshipMatcher
+from py2neo import NodeMatcher
 from os.path import join
 import pandas as pd
 from copy import deepcopy

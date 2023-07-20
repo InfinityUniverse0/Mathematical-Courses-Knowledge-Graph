@@ -1,7 +1,10 @@
 # Mathematical-Courses-Knowledge-Graph
 
+## 项目名称
+
 高等教育数学课程体系知识图谱
 
+<!-- 
 **特别注意**(务必阅读此部分！！！)：
 
 - 本仓库主要有两条branch：`main`和`dev`
@@ -58,12 +61,15 @@
   - 可以使用`git branch`命令查看当前所在分支
 
   - 也可以使用`git status`查看当前所在分支
+-->
 
 ## 项目介绍
 
+本项目构建了一个高等教育数学课程体系知识图谱的Web系统（Demo版），以方便学生、教师、研究人员等人群对高等教育数学课程体系有一个更加直观的认识。
+
 ## 项目结构
 
-```bash
+```
 .
 ├── README.md
 ├── neo4j_db // neo4j图数据库
@@ -72,7 +78,6 @@
 │   │   ├── 课程.csv
 │   │   ├── 知识模块.csv
 │   │   ├── 知识要点.csv
-│   │   └── 数学人物.csv
 │   ├── __init__.py
 │   └── course_graph.py // 生成并初始化图数据库, 并用于后续操作数据库
 └── Web // Django Web项目
@@ -89,7 +94,12 @@
     │   ├── img
     │   └── js
     ├── templates // 模板文件
+    │   ├── welcome.html
     │   ├── index.html
+    │   ├── info_query.html
+    │   ├── study_route.html
+    │   ├── question_answer.html
+    │   ├── courses_overview.html
     │   ├── 404.html
     │   └── 500.html
     ├── Base // Django应用: 基础应用，用于处理一些基础的请求，包括欢迎页面、404、500等
@@ -114,7 +124,6 @@
     │   └── views.py // 视图函数
     └── QA // Django应用: Question Answering System，用于处理问答系统相关的基本请求
         ├── __init__.py
-        ├── __pycache__
         ├── admin.py
         ├── apps.py
         ├── migrations
@@ -137,3 +146,14 @@
         ├── urls.py
         └── views.py 
 -->
+
+## 项目依赖项
+
+> - Django 4.2.3
+> - pandas 2.0.3
+> - py2neo 2021.2.3
+> - mysqlclient 2.2.0
+> - D3.js v5
+> - jieba 0.42.1
+> - openai 0.27.8
+> - urllib3 1.26.16

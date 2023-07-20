@@ -240,9 +240,10 @@ def courses_overview(request):
     if request.method == 'GET':
         res_dict = {
             'nodes': [],
-            'links': []
+            'links': [],
+            'courses': []
         }
-        
+
         # 查询课程
         get_courses_cypher = '''
         Match (n: 课程)
@@ -250,6 +251,11 @@ def courses_overview(request):
         '''
         courses = Graph.graph.run(get_courses_cypher).data()
         for course in courses:
+            res_dict['courses'].append({
+                'id': course['n'].identity,
+                'level': level_dict[list(course['n'].labels)[0]],
+                'name': course['n']['name']
+            })
             res_dict['nodes'].append({
                 'id': course['n'].identity,
                 'level': level_dict[list(course['n'].labels)[0]],
@@ -274,7 +280,7 @@ def courses_overview(request):
                     'level': level_dict[list(pre_course['m'].labels)[0]],
                     'name': pre_course['m']['name']
                 })
-            
+
         # 查询课程模块
         get_course_modules_cypher = '''
         Match path = (: 课程)-[r: 类别]->(: 课程模块)
@@ -295,10 +301,11 @@ def courses_overview(request):
                 'name': course_module['path'].end_node['name']
             })
 
-        # 去重 + 转换为json        
+        # 去重 + 转换为json
         res_dict = {
             'nodes': json.dumps(unique_nodes(res_dict['nodes']), ensure_ascii=False),
-            'links': json.dumps(unique_paths(res_dict['links']), ensure_ascii=False)
+            'links': json.dumps(unique_paths(res_dict['links']), ensure_ascii=False),
+            'courses': json.dumps(res_dict['courses'], ensure_ascii=False)
         }
         return render(request, 'courses_overview.html', {'overview': res_dict})
     return render(request, 'courses_overview.html')

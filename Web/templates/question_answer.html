@@ -5,7 +5,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>数学知识图谱展示</title>
+    <title>智能问答</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
@@ -35,7 +35,6 @@
             background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            overflow: hidden;
         }
 
         #graphContainer {
@@ -89,12 +88,15 @@
             font-size: 30pt;
         }
 
+        /* 输入框美化 */
         #user-input {
             width: 400px;
             padding: 8px;
             font-size: 16px;
-            border: none;
+            border: 2px solid #ccc;
             border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease; /* 添加过渡效果 */
         }
 
         #user-input::placeholder {
@@ -102,9 +104,10 @@
         }
 
         #user-input:focus {
-            outline: none;
+            border-color: #8B008B; /* 输入框获取焦点时的边框颜色 */
         }
 
+        /* 按钮美化 */
         button[type="submit"] {
             background-color: #8B008B;
             border: none;
@@ -113,21 +116,23 @@
             margin: 0 5px;
             cursor: pointer;
             border-radius: 5px;
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
+            outline: none;
         }
 
         button[type="submit"]:hover {
-            background-color: #1C1C1C;
+            background-color: #9932CC; /* 鼠标悬停时的背景颜色 */
         }
 
         button[type="submit"]:active {
-            background-color: #333;
+            background-color: #800080; /* 鼠标点击时的背景颜色 */
         }
 
         #chat-output {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 20px;
-            height: 600px;
+            height: 400px;
             overflow-y: auto;
             background-color: rgba(255, 255, 255, 0.4);
             /* 背景颜色与页面背景一致 */
@@ -205,7 +210,7 @@
             <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
             <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>
@@ -213,7 +218,7 @@
     <h1>Question Answering</h1>
     <form id="chat-form" method="POST">
         <input type="text" id="user-input" placeholder="请输入您的问题" autocomplete="off">
-        <button type="submit">回答</button>
+        <button type="submit">提问</button>
     </form>
     <div id="chat-output"></div>
 

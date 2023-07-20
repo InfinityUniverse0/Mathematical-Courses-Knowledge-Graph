@@ -5,10 +5,11 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>数学知识图谱展示</title>
+    <title>高等教育数学课程体系知识图谱展示</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
+        @import "/static/css/button.css";
 
         @font-face {
             font-family: 'myfont';
@@ -28,11 +29,12 @@
         }
 
         body {
-            background-color: #E8E8E8;
+            background-color: #f2f2f2;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
+            background: #000000;
+            /*background-image: linear-gradient(to bottom right, rgba(82, 107, 147, 0.854), #35193e);*/
             background-repeat: no-repeat;
             background-size: 100% 100%;
             overflow: hidden;
@@ -44,41 +46,18 @@
             height: 650px;
             margin: 16px auto;
             border: 0px solid #ccc;
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: absolute;
             right: 20px;
             top: 100px;
             text-align: center;
+            transition: background-color 0.3s ease;
         }
 
-        /*调整输入框的样式*/
-        #entityRecognition {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 50px;
-        }
-
-        /*调整输入框的样式*/
-        #relationExtraction {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 100px;
-        }
-
-        /*调整输入框的样式*/
-        #ask {
-            margin: 10px auto;
-            width: 800px;
-            /*text-align: left;*/
-            position: absolute;
-            left: 20px;
-            top: 150px;
+        #graphContainer:hover {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         /*学习路线规划按钮*/
@@ -89,16 +68,113 @@
             top: 200px;
         }
 
+        /* 新增的系统介绍模块样式 */
+        #systemIntro {
+            position: absolute;
+            left: 50%;
+            top: 100px;
+            width: 850px;
+            background-color: rgba(255, 255, 255, 0);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+            padding: 20px;
+            text-align: center;
+            transform: translateX(-50%);
+            transition: background-color 0.3s ease;
+            color: #FFDEAD;
+        }
+
+        #systemIntro:hover {
+            background-color: rgba(255, 255, 255, 0);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0);
+        }
+
+        #systemIntro h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        #systemIntro p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        #systemIntro table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        #systemIntro td {
+            font-size: 18px;
+            padding: 8px;
+            border: 2px solid #6A5ACD;
+        }
+
+        #systemIntro th {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 8px;
+        }
+
+        #systemIntro ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #systemIntro li {
+            font-size: 18px;
+            margin: 0 20px;
+        }
+
         input[type="text"] {
             width: 400px;
             padding: 8px;
             font-size: 16px;
+        }
+        /* 添加动态背景的CSS动画 */
+        .background {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: url("/static/img/index.jpg");
+            /* 如果图片名称不同，请替换为实际的图片名称 */
+            background-size: cover;
+            /* 确保背景图片填充整个容器 */
+            animation: moveBackground 20s linear infinite;
+            /* 背景动画 */
+            z-index: -1;
+            /* 将背景放置在其他内容后面 */
+        }
+
+        @keyframes moveBackground {
+            0% {
+                background-position: 0 0;
+                /*transform: rotate(0deg);*/
+            }
+
+            50% {
+                /*background-position: 0 0;
+                /*transform: rotate(180deg);*/
+            }
+
+            100% {
+                background-position: 2000px 2000px;
+                /* 根据需要调整背景移动的距离
+                /*transform: rotate(360deg);*/
+            }
         }
     </style>
 
 </head>
 
 <body>
+<div class="background"></div>
     <div class="container">
         <div class="info-bar">
             <button id="toggleBtn" onclick=displayBar()>&#9776 </button>
@@ -108,40 +184,70 @@
         <ul class="button-bar" id="navbar">
             <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
             <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
-
-
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>
-    <div id="graphContainer">
-        知识图谱
-        <!--知识图谱展示部分-->
-        <svg width="800" height="600"></svg>
+
+    <!-- 系统介绍模块 -->
+    <div id="systemIntro">
+        <h2>欢迎来到高等教育数学课程体系知识图谱展示系统！</h2>
+        <p>我们的系统包含高等教育数学课程体系中的基本课程，以及它们包括的知识模块和知识要点。</p>
+        <table>
+            <tr>
+                <th style="border: 2px solid #6A5ACD;">功能</th>
+                <th style="border: 2px solid #6A5ACD;">简介</th>
+            </tr>
+            <tr>
+                <td style="font-weight:bold">信息查询</td>
+                <td>输入课程关键字或数学知识点，系统返回相关课程和内容。</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold">学习路线</td>
+                <td>输入想学习的数学课程，系统以知识图谱形式返回学习路线，包括先导课程等。</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold">智能问答</td>
+                <td>与系统交互，输入问题，系统返回相关数学知识答案。</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold">课程总览</td>
+                <td>以表格和图谱展示所有课程，点击课程查看详细信息。</td>
+            </tr>
+        </table>
     </div>
-    <!--    用于显示结点详细内容的框-->
-    <div
-        style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
-        这里是展示的框
-        <span id="xxx"></span>
-        <div>课程名</div>
-        <div>课程简介</div>
-        <div>参考书籍</div>
+    <div class="light1" onclick="goToQuery()">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        信息查询
     </div>
-
-
-    <!--<script-->
-
-    <script src="http://d3js.org/d3.v5.min.js"></script>
-    <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+    <div class="light2" onclick="goToStudyRoute()">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        学习路线
+    </div>
+    <div class="light3" onclick="goToQuestionAnswer()">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        智能问答
+    </div>
+    <div class="light4" onclick="goToCoursesOverview()">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        课程总览
+    </div>
+    <!-- <script -->
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>
-    <!-- <script src="./relationExtraction.js"></script>
-    <script src="../entityRecognition.js"></script> -->
-    <script src="/static/js/graph.js"></script>
-
 </body>
-
 
 </html>
