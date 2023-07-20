@@ -231,12 +231,12 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>
     <div id="courseRecognition">
-        <form method="POST" action="post1" id="form1">
+        <form method="POST" id="form1">
             <input type="text" class="entityInput1" placeholder="请输入您要查询的课程关键字" id="course_input">
             <button class="entityButton" id="course_button">查询相关课程</button>
         </form>
@@ -266,7 +266,7 @@
     </div>
 
     <div id="fuzzquery">
-        <form method="POST" action="post2" id="form2">
+        <form method="POST" id="form2">
             <input type="text" class="entityInput2" placeholder="请输入您要查询的数学知识点" id="kn_input">
             <button class="entityButton" id="kn_button">查询知识点</button>
         </form>

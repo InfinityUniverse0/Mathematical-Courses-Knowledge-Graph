@@ -210,7 +210,7 @@
         </ul>
     </div>
     <!--    布局问答输入框-->
-    <h1>Question & Answer</h1>
+    <h1>Question Answering</h1>
     <form id="chat-form" method="POST">
         <input type="text" id="user-input" placeholder="请输入您的问题" autocomplete="off">
         <button type="submit">回答</button>
@@ -232,7 +232,7 @@
             // 将用户消息添加到聊天界面中
             appendMessage('user', message);
 
-            post = 'question_answer/chat';
+            post = 'chat/';
             // 发送用户消息到服务器
             sendUserMessage(post, message);
 

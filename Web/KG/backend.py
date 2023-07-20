@@ -5,8 +5,12 @@
 '''
 
 # Begin Here
-from py2neo import Graph
+# 导入neo4j_db/course_graph.py 中的 CourseGraph类
+import sys
+sys.path.append("..")
+from neo4j_db.course_graph import CourseGraph
 
+# Config
 level_dict = {
     '课程模块': 0,
     '课程': 1,
@@ -23,15 +27,7 @@ name_map = {
     '知识要点': 'point'
 }
 
-
-def init_neo4j():
-    config = {
-        'profile': 'bolt://localhost:7687',
-        'auth': ('neo4j', '12345678')
-    }
-    return Graph(config['profile'], auth=config['auth'])
-
-
+# Functions
 def nodes_to_list(cursor_node, table=False):
     '''将py2neo.Node对象转换为点集'''
     node_list = []

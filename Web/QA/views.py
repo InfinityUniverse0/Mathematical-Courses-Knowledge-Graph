@@ -12,11 +12,13 @@ from .backend import *
 import jieba
 import json
 
-graph = init_neo4j()
+# 初始化neo4j数据库
+Graph = CourseGraph()
 
 # Create your views here.
 
-def turn_ques_ans(request):
+# 跳转到QA系统
+def jump_ques_ans(request):
     return render(request, 'question_answer.html')
 
 # 智能问答系统
@@ -57,7 +59,7 @@ def AIchat(request):
                             where n.name contains '{}'
                             optional match p = (n)-[r:先导|含于|属于]->()
                             return p, r'''.format(word)
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_list.extend(nodes)
             path_list.extend(paths)
@@ -67,7 +69,7 @@ def AIchat(request):
                                     where n.name contains '{}'
                                     optional match p = ()-[r:先导|含于|属于]->(n)
                                     return p, r'''.format(word)
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_list.extend(nodes)
             path_list.extend(paths)

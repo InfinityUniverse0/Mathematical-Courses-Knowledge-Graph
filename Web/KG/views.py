@@ -12,27 +12,27 @@ import json
 # 导入backend.py中的所有函数
 from .backend import *
 
-graph = init_neo4j()
+Graph = CourseGraph()
 
 
 # Create your views here.
-# 提供精确查询，用户输入一个课程名，查出该课程的所有知识模块，以及知识模块之间的关系
 
 def index(request):
     return render(request,'index.html')
 
 # 为GET请求提供跳转接口
-def turn_info_query(request):
+def jump_info_query(request):
     return render(request, 'info_query.html')
 
 # 为GET请求提供跳转接口
-def turn_study_route(request):
+def jump_study_route(request):
     return render(request, 'study_route.html')
 
 # 为GET请求提供跳转接口
-def question_answer(request):
+def jump_question_answer(request):
     return render(request, 'question_answer.html')
 
+# 提供精确查询(子串查询)，用户输入一个课程名，查出该课程的所有知识模块，以及知识模块之间的关系
 def query_course(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
@@ -47,7 +47,7 @@ def query_course(request):
         cypher = '''MATCH (n:课程) 
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
-        cursor = graph.run(cypher).data()
+        cursor = Graph.graph.run(cypher).data()
         node_list = nodes_to_list(cursor, table=True)
         node_other, path_list, path_other = [], [], []
         for node in node_list:
@@ -60,7 +60,7 @@ def query_course(request):
                     WHERE exists((m)-[:属于]->(n))
                     RETURN p, r
                       '''.format(node['id'])
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_other.extend(nodes)
             path_other.extend(paths)
@@ -81,7 +81,7 @@ def query_course(request):
         return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
 
-# 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，已经周围节点
+# 提供模糊查询，用户输入一个字符串，查出所有包含该字符串的节点，以及周围节点
 def query_vague(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
@@ -98,7 +98,7 @@ def query_vague(request):
             cypher = '''MATCH (n:知识要点)
                         WHERE n.name CONTAINS '{}'
                         RETURN n'''.format(word)
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             point_list = nodes_to_list(cursor)
             node_list.extend(point_list)
             for point in point_list:
@@ -110,7 +110,7 @@ def query_vague(request):
                         with m
                         OPTIONAL MATCH p = (m)-[r:含于]->(n)
                         RETURN n'''.format(point['id'])
-                cursor = graph.run(cypher).data()
+                cursor = Graph.graph.run(cypher).data()
                 module = nodes_to_list(cursor)[0]
                 node_list.append(module)
 
@@ -121,7 +121,7 @@ def query_vague(request):
                         with m
                         OPTIONAL MATCH p = (m)-[r:属于]->(n)
                         RETURN n'''.format(module['id'])
-                cursor = graph.run(cypher).data()
+                cursor = Graph.graph.run(cypher).data()
                 course = nodes_to_list(cursor)[0]
                 node_list.append(course)
 
@@ -154,9 +154,10 @@ def learn_path(request):
         cypher = '''MATCH (n:课程) 
                  WHERE n.name CONTAINS '{}'
                  RETURN n'''.format(course_name)
-        cursor = graph.run(cypher).data()
+        
+        cursor = Graph.graph.run(cypher).data()
         node_list = nodes_to_list(cursor)
-        node_other = []
+        path_list, node_other = [], []
         for node in node_list:
             cypher = '''
                     MATCH (n)
@@ -165,9 +166,12 @@ def learn_path(request):
                     OPTIONAL MATCH p = (n)-[r:先导*]->(predecessork)
                     RETURN p, r
                       '''.format(node['id'])
-            cursor = graph.run(cypher).data()
-            path_list, nodes = paths_to_list(cursor)
+            cursor = Graph.graph.run(cypher).data()
+            paths, nodes = paths_to_list(cursor)
+
             node_other.extend(nodes)
+            path_list.extend(paths)
+
         node_list.extend(node_other)
 
         # 去重处理
@@ -181,9 +185,8 @@ def learn_path(request):
         }
         return JsonResponse({'search': response_data})
     return render(request, 'study_route.html')
-# def courses_overview(request):
-#     return render(request, 'courses_overview.html')
 
+# 用于课程绘图
 def query_course_one(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
@@ -198,7 +201,7 @@ def query_course_one(request):
         cypher = '''MATCH (n:课程) 
                     WHERE n.name = '{}'
                     RETURN n'''.format(course_name)
-        cursor = graph.run(cypher).data()
+        cursor = Graph.graph.run(cypher).data()
         node_list = nodes_to_list(cursor, table=True)
         node_other, path_list, path_other = [], [], []
         for node in node_list:
@@ -211,7 +214,7 @@ def query_course_one(request):
                        WHERE exists((m)-[:属于]->(n))
                        RETURN p, r
                          '''.format(node['id'])
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_other.extend(nodes)
             path_other.extend(paths)
@@ -232,6 +235,7 @@ def query_course_one(request):
         return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
 
+# 课程总览
 def courses_overview(request):
     if request.method == 'GET':
         res_dict = {
@@ -244,11 +248,11 @@ def courses_overview(request):
         Match (n: 课程)
         Return n
         '''
-        courses = graph.run(get_courses_cypher).data()
+        courses = Graph.graph.run(get_courses_cypher).data()
         for course in courses:
             res_dict['nodes'].append({
                 'id': course['n'].identity,
-                'level000': level_dict[list(course['n'].labels)[0]],
+                'level': level_dict[list(course['n'].labels)[0]],
                 'name': course['n']['name']
             })
             # 查询课程的先导课程
@@ -256,7 +260,7 @@ def courses_overview(request):
             Match (n: 课程 {name: '%s'})-[r: 先导]->(m: 课程)
             Return r, m
             ''' % (course['n']['name'])
-            pre_courses = graph.run(get_pre_courses_cypher).data()
+            pre_courses = Graph.graph.run(get_pre_courses_cypher).data()
             for pre_course in pre_courses:
                 res_dict['links'].append({
                     'id': pre_course['r'].identity,
@@ -267,7 +271,7 @@ def courses_overview(request):
                 })
                 res_dict['nodes'].append({
                     'id': pre_course['m'].identity,
-                    'level000': level_dict[list(pre_course['m'].labels)[0]],
+                    'level': level_dict[list(pre_course['m'].labels)[0]],
                     'name': pre_course['m']['name']
                 })
             
@@ -276,7 +280,7 @@ def courses_overview(request):
         Match path = (: 课程)-[r: 类别]->(: 课程模块)
         Return path, r
         '''
-        course_modules = graph.run(get_course_modules_cypher).data()
+        course_modules = Graph.graph.run(get_course_modules_cypher).data()
         for course_module in course_modules:
             res_dict['links'].append({
                 'id': course_module['r'].identity,
@@ -287,7 +291,7 @@ def courses_overview(request):
             })
             res_dict['nodes'].append({
                 'id': course_module['path'].end_node.identity,
-                'level000': level_dict[list(course_module['path'].end_node.labels)[0]],
+                'level': level_dict[list(course_module['path'].end_node.labels)[0]],
                 'name': course_module['path'].end_node['name']
             })
 
@@ -299,6 +303,7 @@ def courses_overview(request):
         return render(request, 'courses_overview.html', {'overview': res_dict})
     return render(request, 'courses_overview.html')
 
+# 课程总览中的课程详情
 def get_course_knowledge(request):
     if request.method == 'POST':
         body = request.body.decode('utf-8')
@@ -317,7 +322,7 @@ def get_course_knowledge(request):
         Match (n: 知识模块)-[r: 属于]->(m: 课程 {name: '%s'})
         Return n, r, m
         ''' % (course_name)
-        knowledge_modules = graph.run(get_knowledge_modules_cypher).data()
+        knowledge_modules = Graph.graph.run(get_knowledge_modules_cypher).data()
         for idx, knowledege_module in enumerate(knowledge_modules):
             if idx == 0:
                 res_dict['nodes'].append({
@@ -343,7 +348,7 @@ def get_course_knowledge(request):
         Where Exists ((n)-[:属于]->(: 课程 {name: '%s'}))
         Return r,n,m
         ''' % (course_name)
-        knowledge_modules = graph.run(get_knowledge_modules_cypher).data()
+        knowledge_modules = Graph.graph.run(get_knowledge_modules_cypher).data()
         for knowledge_module in knowledge_modules:
             res_dict['links'].append({
                 'id': knowledge_module['r'].identity,
@@ -357,7 +362,7 @@ def get_course_knowledge(request):
         Match (n: 知识要点)-[r: 含于]->(m: 知识模块)-[: 属于]->(: 课程 {name: '%s'})
         Return n, r, m
         ''' % (course_name)
-        knowledge_points = graph.run(get_knowledge_points_cypher).data()
+        knowledge_points = Graph.graph.run(get_knowledge_points_cypher).data()
         for knowledge_point in knowledge_points:
             res_dict['nodes'].append({
                 'id': knowledge_point['n'].identity,

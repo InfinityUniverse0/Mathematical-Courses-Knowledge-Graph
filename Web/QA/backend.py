@@ -6,18 +6,12 @@
 
 import openai
 from django.conf import settings
-from py2neo import Graph
-
 openai.api_key = settings.OPENAI_API_KEY
 
-# 初始化neo4j数据库
-def init_neo4j():
-    config = {
-        'profile': 'bolt://localhost:7687',
-        'auth': ('neo4j', '12345678')
-    }
-    return Graph(config['profile'], auth=config['auth'])
-
+# 导入neo4j_db/course_graph.py 中的 CourseGraph类
+import sys
+sys.path.append("..")
+from neo4j_db.course_graph import CourseGraph
 
 # 和AI交互的接口，输入格式：[message1, message2, ...]
 def chat(message_list: list):
@@ -33,7 +27,6 @@ def chat(message_list: list):
     except Exception as e:
         completion = 'ERROR: ' + str(e)
     return completion
-
 
 # Node查询的cursor转化为list节点集
 def nodes_to_list(cursor_node, table=False):
@@ -56,8 +49,7 @@ def nodes_to_list(cursor_node, table=False):
         node_list.append(node_dict)
     return node_list
 
-
-
+# Path查询的cursor转化为list边集
 def paths_to_list(cursor_path):
     '''将py2neo.Path对象转换为边集'''
     path_list, node_list = [], []
@@ -78,7 +70,6 @@ def paths_to_list(cursor_path):
         path_list.append(path_dict)
     return path_list, nodes_to_list(node_list)
 
-
 # 节点集去重
 def unique_nodes(node_list):
     unique_list = []
@@ -86,8 +77,6 @@ def unique_nodes(node_list):
         if node not in unique_list:
             unique_list.append(node)
     return unique_list
-
-
 
 # 边集去重
 def unique_paths(path_list):
@@ -99,5 +88,3 @@ def unique_paths(path_list):
             unique_list.append(path)
             edges.append(edge)
     return unique_list
-
-
