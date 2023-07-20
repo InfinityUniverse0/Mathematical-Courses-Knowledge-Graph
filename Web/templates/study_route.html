@@ -5,7 +5,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>数学知识图谱展示</title>
+    <title>高等教育课程体系知识图谱展示</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
@@ -49,6 +49,10 @@
             right: 20px;
             top: 100px; */
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            /*让边框变为圆角*/
+            border: 1px solid gray;
         }
 
         /*学习路线规划按钮*/
@@ -92,7 +96,7 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
         <form align="center" id="study_form" action="post1" method="POST">

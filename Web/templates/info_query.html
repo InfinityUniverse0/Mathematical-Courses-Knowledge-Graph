@@ -4,7 +4,7 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>信息查询</title>
+    <title>高等教育课程体系知识图谱展示</title>
     <!-- <link rel="stylesheet" type="text/css" href="/static/css/option.css"> -->
     <style>
         /* CSS样式 */
@@ -48,6 +48,10 @@
             right: -45px;
             top: 10px;
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            /*让边框变为圆角*/
+            border: 1px solid gray;
         }
 
         /*调整课程查询框的样式*/
@@ -231,7 +235,7 @@
 
 
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
     </div>

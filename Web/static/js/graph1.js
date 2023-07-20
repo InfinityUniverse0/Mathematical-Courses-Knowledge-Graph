@@ -157,19 +157,19 @@ gs.append('circle')
     })
     .attr('fill', function (d, i) {
         //为不同层级的结点绘制不同的颜色
-        // if (d.level === 0) {
-        //     return '#F0FFF0';
-        // } else if (d.level === 1) {
-        //     return 'pink';
-        // } else if (d.level === 2) {
-        //     return '#00EE76';
-        // } else {
-        //     return '#B0E2FF';
-        // }
-        if (d.name.includes("类"))
-            return '#FFEBCD';
-        else
+        if (d.level === 0) {
+            // return '#FF3333';
+            return '#00EE76';
+        } else if (d.level === 1) {
+            return '#00FFFF';
+            // return '#F0FFF0';
+        } else if (d.level === 2) {
+            // return '#33FF33';
+            return 'pink';
+        } else {
+            // return '#FFB7DD';
             return '#B0E2FF';
+        }
     })
     .attr('stroke', 'grey')
     .attr('stroke-width', 3)
@@ -692,11 +692,13 @@ function genNodesMap(nodes) {
     const hash = {};
     nodes.map(function ({
         id,
-        name
+        name,
+        level
     }) {
         hash[id] = {
             id,
-            name
+            name,
+            level
         };
     });
     return hash;

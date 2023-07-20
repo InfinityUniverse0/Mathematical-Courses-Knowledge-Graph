@@ -5,7 +5,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>数学知识图谱展示</title>
+    <title>高等教育课程体系知识图谱展示</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
@@ -47,8 +47,12 @@
             background-color: rgba(255, 255, 255, 0.4);
             position: absolute;
             right: 20px;
-            top: 100px;
+            top: 130px;
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            /*让边框变为圆角*/
+            border: 1px solid gray;
         }
 
         /*学习路线规划按钮*/
@@ -73,13 +77,60 @@
             color: #FFC125;
             border: none;
             position: absolute;
-            top: 73px;
+            top: 100px;
             right: 355px;
             cursor: pointer;
         }
 
-        #updateBtn:hover {
-            background-color: #1C1C1C;
+        #coursesquery {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 70px;
+            margin-bottom: 70px;
+            left: 80px;
+            top: 68px;
+        }
+
+        .coursesResults {
+            margin-top: 20px;
+            margin-left: 10px;
+            text-align: center;
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        .coursesTable {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 400px;
+        }
+
+        .coursesTable th,
+        .coursesTable td {
+            border: 2px solid #6A5ACD;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .coursesTable th {
+            background-color: #FFF5EE;
+            color: #2F4F4F;
+            position: sticky;
+            /* 固定表头 */
+            top: 0;
+            /* 与容器顶部保持距离 */
+            z-index: 1;
+            /* 提高堆叠顺序 */
+        }
+
+        .coursesData {
+            background-color: rgba(255, 255, 255, 0.4);
+
         }
     </style>
 
@@ -98,7 +149,7 @@
             <!-- 课程信息查询(子串匹配)  数学知识查询(模糊匹配)          -->
             <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
-            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
             <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
         </ul>
         <form id="hidden_form" action="details" method="POST">
@@ -134,29 +185,29 @@
         <!--知识图谱展示部分-->
         <svg width="800" height="600"></svg>
     </div>
-    <!--    用于显示结点详细内容的框-->
-    <div
-        style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
-        这里是展示的框
-        <span id="xxx"></span>
-        <div>课程名</div>
-        <div>课程简介</div>
-        <div>参考书籍</div>
+    <!--    用于显示全部课程信息-->
+    <div id="coursesquery">
+        <div class="coursesResults">
+            <table class="coursesTable">
+                <thead>
+                    <tr>
+                        <th>课程名称</th>
+                    </tr>
+                </thead>
+                <tbody class="coursesData">
+                    <!-- 这里将动态插入查询到的课程信息 -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
     <script></script>
-    <!--<script-->
-    <!-- <script>setRawData()</script> -->
     <script src="http://d3js.org/d3.v5.min.js"></script>
-    <!-- <script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script> -->
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>
-    <!-- <script src="./relationExtraction.js"></script>
-    <script src="../entityRecognition.js"></script> -->
     <script src="/static/js/graph.js"></script>
     <script src="{% static 'js/graph1.js' %}" data-nodes="{{ overview.nodes }}"
         data-links="{{overview.links}}"></script>
-
+    <script src="{% static 'js/tables.js' %}" data-courses="{{ overview.courses }}"></script>
 </body>
 
 

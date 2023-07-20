@@ -14,18 +14,20 @@ sys.path.append("..")
 from neo4j_db.course_graph import CourseGraph
 
 # 和AI交互的接口，输入格式：[message1, message2, ...]
-def chat(message_list: list):
+def chat(message_list: list, role: str):
     try:
-        messages = []
+        messages = [{"role": "system", "content": '你是一个' + role}]
         for msg in message_list:
             messages.append({"role": "user", "content": msg})
         response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
+            model='gpt-3.5-turbo-16k',
             messages=messages,
         )
         completion = response['choices'][0]['message']['content']
-    except Exception as e:
-        completion = 'ERROR: ' + str(e)
+    except openai.error.InvalidRequestError: # 超出Token上限或模型参数错误
+        completion = "AI内部错误, 请重试!"
+    except openai.error.RateLimitError: # 超出3条/min的请求限制
+        completion = '系统繁忙，请稍等片刻再进行提问~~'
     return completion
 
 # Node查询的cursor转化为list节点集
