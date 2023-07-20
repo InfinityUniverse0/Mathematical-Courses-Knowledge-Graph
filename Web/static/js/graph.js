@@ -1,5 +1,3 @@
-// const btn2 = document.getElementById("all_course");
-// btn2.addEventListener("click", setRawData);
 function update_data(value) {
     document.getElementById('updateInput').value = value;
 
@@ -369,7 +367,7 @@ function graphDisplay(data_nodes, data_links) {
             type: 'showOff'
         }, {
             population: 30,
-            value: '查看详细信息',
+            value: '展开',
             type: 'showDetail'
         }]
         var sum = d3.sum(data.map(function (d) {

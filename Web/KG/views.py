@@ -235,7 +235,6 @@ def query_course_one(request):
         return JsonResponse({'search': response_data})
     return render(request, 'info_query.html')
 
-
 # 课程总览
 def courses_overview(request):
     if request.method == 'GET':

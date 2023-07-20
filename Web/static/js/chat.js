@@ -55,7 +55,7 @@ function showChatGptResponse(response) {
     typingCursor.style.visibility = 'visible';
 
     let index = 0;
-    const delay = 50; // 每个字符的延迟时间间隔（毫秒）
+    const delay = 30; // 每个字符的延迟时间间隔（毫秒）
 
     const intervalId = setInterval(() => {
         aiResponseElement.innerHTML = `<span class="icon"><i class="fas fa-robot chatgpt-icon"></i></span>${response.slice(
@@ -70,6 +70,3 @@ function showChatGptResponse(response) {
         }
     }, delay);
 }
-
-
-

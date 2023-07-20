@@ -228,17 +228,17 @@ console.log(typeof all_courses);
 console.log(all_courses);
 
 // 更新知识要点表格数据
-var allcoursesdata = document.getElementsByClassName('coursesData')[0];
-allcoursesdata.innerHTML = '';
+  var allcoursesdata = document.getElementsByClassName('coursesData')[0];
+  allcoursesdata.innerHTML = '';
 
-if (all_courses.length > 0) {
-    // 循环添加当前知识要点
-    for (var i = 0; i < all_courses.length; i++) {
-        var course_item = all_courses[i];
-        var row = document.createElement('tr');
-        var course_item_Cell = document.createElement('td');
-        course_item_Cell.textContent = course_item.name;
-        row.appendChild(course_item_Cell);
-        allcoursesdata.appendChild(row);
-    }
-}
+  if (all_courses.length > 0) {
+      // 循环添加当前知识要点
+      for (var i = 0; i < all_courses.length; i++) {
+          var course_item = all_courses[i];
+          var row = document.createElement('tr');
+          var course_item_Cell = document.createElement('td');
+          course_item_Cell.textContent = course_item.name;
+          row.appendChild(course_item_Cell);
+          allcoursesdata.appendChild(row);
+      }
+  }

@@ -5,7 +5,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>高等教育课程体系知识图谱展示</title>
+    <title>课程总览</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
@@ -49,10 +49,6 @@
             right: 20px;
             top: 130px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            /*让边框变为圆角*/
-            border: 1px solid gray;
         }
 
         /*学习路线规划按钮*/
@@ -78,7 +74,7 @@
             border: none;
             position: absolute;
             top: 100px;
-            right: 355px;
+            right: 340px;
             cursor: pointer;
         }
 
@@ -95,11 +91,11 @@
             left: 80px;
             top: 68px;
         }
-
         .coursesResults {
             margin-top: 20px;
             margin-left: 10px;
             text-align: center;
+            background-color: rgba(255, 255, 255, 0.4);
             height: 400px;
             overflow-y: auto;
         }
@@ -127,11 +123,6 @@
             z-index: 1;
             /* 提高堆叠顺序 */
         }
-
-        .coursesData {
-            background-color: rgba(255, 255, 255, 0.4);
-
-        }
     </style>
 
 </head>
@@ -146,7 +137,7 @@
             <span class="demo" style="font-family:'myfont', cursive"> DEMO</span>
         </div>
         <ul class="button-bar" id="navbar">
-            <!-- 课程信息查询(子串匹配)  数学知识查询(模糊匹配)          -->
+            <!-- 课程信息查询(子串匹配)  数学知识查询(模糊匹配) -->
             <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
             <li onclick="goToStudyRoute()">&#1421 学习路线</li>
             <li onclick="goToQuestionAnswer()">&#9729 智能问答</li>
@@ -154,7 +145,7 @@
         </ul>
         <form id="hidden_form" action="details" method="POST">
             <input type="hidden" id="updateInput" name="name" value=""></input>
-            <button type="submit" id="updateBtn">查询详细信息</button>
+            <button type="submit" id="updateBtn">查询课程详细信息</button>
         </form>
 
         <script>
@@ -190,12 +181,12 @@
         <div class="coursesResults">
             <table class="coursesTable">
                 <thead>
-                    <tr>
-                        <th>课程名称</th>
-                    </tr>
+                <tr>
+                    <th>课程名称</th>
+                </tr>
                 </thead>
                 <tbody class="coursesData">
-                    <!-- 这里将动态插入查询到的课程信息 -->
+                <!-- 这里将动态插入查询到的课程信息 -->
                 </tbody>
             </table>
         </div>
@@ -205,8 +196,7 @@
     <script src="/static/js/toggle.js"></script>
     <script src="/static/js/createreq.js"></script>
     <script src="/static/js/graph.js"></script>
-    <script src="{% static 'js/graph1.js' %}" data-nodes="{{ overview.nodes }}"
-        data-links="{{overview.links}}"></script>
+    <script src="{% static 'js/graph_get.js' %}" data-nodes="{{ overview.nodes }}" data-links="{{overview.links}}"></script>
     <script src="{% static 'js/tables.js' %}" data-courses="{{ overview.courses }}"></script>
 </body>
 

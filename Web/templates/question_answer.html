@@ -5,7 +5,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta maximum-scale=1.0, user-scalable=0>
-    <title>高等教育课程体系知识图谱展示</title>
+    <title>智能问答</title>
     <style>
         /* CSS样式 */
         @import "/static/css/option.css";
@@ -35,7 +35,6 @@
             background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            overflow: hidden;
         }
 
         #graphContainer {
@@ -97,8 +96,7 @@
             border: 2px solid #ccc;
             border-radius: 4px;
             outline: none;
-            transition: border-color 0.3s ease;
-            /* 添加过渡效果 */
+            transition: border-color 0.3s ease; /* 添加过渡效果 */
         }
 
         #user-input::placeholder {
@@ -106,8 +104,7 @@
         }
 
         #user-input:focus {
-            border-color: #8B008B;
-            /* 输入框获取焦点时的边框颜色 */
+            border-color: #8B008B; /* 输入框获取焦点时的边框颜色 */
         }
 
         /* 按钮美化 */
@@ -119,26 +116,23 @@
             margin: 0 5px;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
-            /* 添加过渡效果 */
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
             outline: none;
         }
 
         button[type="submit"]:hover {
-            background-color: #9932CC;
-            /* 鼠标悬停时的背景颜色 */
+            background-color: #9932CC; /* 鼠标悬停时的背景颜色 */
         }
 
         button[type="submit"]:active {
-            background-color: #800080;
-            /* 鼠标点击时的背景颜色 */
+            background-color: #800080; /* 鼠标点击时的背景颜色 */
         }
 
         #chat-output {
             max-width: 1100px;
             margin: 0 auto;
             padding: 20px;
-            height: 500px;
+            height: 400px;
             overflow-y: auto;
             background-color: rgba(255, 255, 255, 0.4);
             /* 背景颜色与页面背景一致 */

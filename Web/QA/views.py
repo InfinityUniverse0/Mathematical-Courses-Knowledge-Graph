@@ -59,7 +59,7 @@ def AIchat(request):
                             where n.name contains '{}'
                             optional match p = (n)-[r:先导|含于|属于]->()
                             return p, r'''.format(word)
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_list.extend(nodes)
             path_list.extend(paths)
@@ -69,7 +69,7 @@ def AIchat(request):
                                     where n.name contains '{}'
                                     optional match p = ()-[r:先导|含于|属于]->(n)
                                     return p, r'''.format(word)
-            cursor = graph.run(cypher).data()
+            cursor = Graph.graph.run(cypher).data()
             paths, nodes = paths_to_list(cursor)
             node_list.extend(nodes)
             path_list.extend(paths)
@@ -98,4 +98,4 @@ def AIchat(request):
         answer = chat(prompt, '高等数学教育智能问答系统')
 
         return JsonResponse({'completion': answer}, status=200)
-    return render(request, 'question_answer.html')
+    return render(request, 'ques_ans.html')

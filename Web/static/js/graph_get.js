@@ -1,5 +1,4 @@
-// const btn1 = document.getElementById("all_course");
-// btn1.addEventListener("click", graphDisplay);
+// 课程总览GET绘图
 var raw_nodes = document.currentScript.getAttribute('data-nodes');
 var data_nodes = JSON.parse(raw_nodes);
 var raw_links = document.currentScript.getAttribute('data-links');
@@ -331,7 +330,7 @@ function toggleCircle(current, d) {
         type: 'showOff'
     }, {
         population: 30,
-        value: '查看详细信息',
+        value: '展开',
         type: 'showDetail'
     }]
     var sum = d3.sum(data.map(function (d) {
