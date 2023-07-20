@@ -1,3 +1,11 @@
+// const btn2 = document.getElementById("all_course");
+// btn2.addEventListener("click", setRawData);
+function update_data(value) {
+    document.getElementById('updateInput').value = value;
+
+    console.log(document.getElementById('updateInput').value)
+}
+//异步传递表单请求
 function sendRequest(post, inputValue) {
     fetch(post, {
         method: 'POST',
@@ -15,15 +23,24 @@ function sendRequest(post, inputValue) {
             console.log('请求失败:', error);
         });
 }
-//为graphDisplay设置好参数
+//异步传递表单为graphDisplay设置好参数
 function setData(data) {
     nodes1 = data.nodes;
     links1 = data.links;
     data_nodes = JSON.parse(data.nodes);
     data_links = JSON.parse(data.links);
     graphDisplay(data_nodes, data_links);
-
 }
+//直接传递信息
+// function setRawData() {
+//     var raw_nodes = document.currentScript.getAttribute('data-nodes');
+//     console.log(raw_nodes)
+//     var data_nodes = JSON.parse(raw_nodes);
+//     var raw_links = document.currentScript.getAttribute('data-links');
+//     var data_links = JSON.parse(raw_links);
+//     graphDisplay(data_nodes, data_links);
+// }
+//绘出知识图谱
 function graphDisplay(data_nodes, data_links) {
     let marge = { top: 0, bottom: 0, left: 0, right: 0 }
     let svg = d3.select('svg')
@@ -40,23 +57,19 @@ function graphDisplay(data_nodes, data_links) {
     let g = svg.append('g')
         .attr('transform', 'translate(' + marge.top + ',' + marge.left + ')')
         .attr('class', 'container')
+
+
     // 准备数据
     // 节点集
-    console.log('2', nodes1, typeof nodes1, typeof data_nodes, data_nodes)
-
     let nodes = data_nodes
+    // 边集
     let tempEdges = data_links
-    // nodes.forEach(item => {
-
-    // })
     // 生成 nodes map
     let nodesMap = genNodesMap(nodes);
-    console.log('3333', nodesMap)
     nodesData = d3.values(nodesMap)
     let linkMap = genLinkMap(tempEdges)
     // 构建 links（source 属性必须从 0 开始）
     edges = genLinks(tempEdges);
-    console.log('123123', edges, nodesData)
     // 设置一个颜色比例尺
     let colorScale = d3.scaleOrdinal()
         .domain(d3.range(nodesData.length))
@@ -133,6 +146,7 @@ function graphDisplay(data_nodes, data_links) {
             return 'translate(' + cirX + ',' + cirY + ')'
         })
     // 鼠标交互
+
     gs.on('mouseover', function (d, i) {
         // 显示连接线上的文字
         toggleLineText(d, true)
@@ -146,6 +160,7 @@ function graphDisplay(data_nodes, data_links) {
             toggleNode(gs, d, false)
         })
         .on('click', function (d, i) {
+            update_data(d.name)
             linksText.style('fill-opacity', function (edge) {
                 if (edge.source === d) {
                     return 1
@@ -165,7 +180,7 @@ function graphDisplay(data_nodes, data_links) {
             data = d3.select(target).datum(); //  获取事件发生源的数据
         removeSingle()
         if (!data) {
-            document.getElementById('xxx').innerText = ''
+            // document.getElementById('xxx').innerText = ''
         }
     }, true)
     forceSimulation.on('tick', ticked)
@@ -242,7 +257,7 @@ function graphDisplay(data_nodes, data_links) {
                 .on("end", ended));
         gs.append('circle')
             .attr('fill', function (d) {
-                为不同层级的结点绘制不同的颜色
+                //为不同层级的结点绘制不同的颜色
                 if (d.level === 0) {
                     return '#00EE76';
                 } else if (d.level === 1) {
@@ -334,10 +349,10 @@ function graphDisplay(data_nodes, data_links) {
         var currentD = d
         if (d.clickFlag) {
             removeSingle()
-            document.getElementById('xxx').innerText = ''
+            // document.getElementById('xxx').innerText = ''
         }
         d.clickFlag = true
-        document.getElementById('xxx').innerText = d.name
+        // document.getElementById('xxx').innerText = d.name
         var data = [{
             population: 30,
             value: 'X',
@@ -345,11 +360,11 @@ function graphDisplay(data_nodes, data_links) {
         }, {
             population: 30,
             value: '收起',
-            type: 'showOn'
+            type: 'showOff'
         }, {
             population: 30,
-            value: '展开',
-            type: 'showOff'
+            value: '查看详细信息',
+            type: 'showDetail'
         }]
         var sum = d3.sum(data.map(function (d) {
             return d.population
@@ -405,6 +420,7 @@ function graphDisplay(data_nodes, data_links) {
                     deleteNextNodes(currentD)
                 } else {
                     // showMyList()
+
                 }
                 d3.event.stopPropagation()
             })
@@ -470,17 +486,18 @@ function graphDisplay(data_nodes, data_links) {
             .on('click', function (d) {
                 if (d.type === 'delete') {
                     deleteNode(currentD)
-                } else if (d.type === 'showOn') {
+                } else if (d.type === 'showOff') {
                     deleteNextNodes(currentD)
                 } else {
                     // showMyList()
+
                 }
                 d3.event.stopPropagation()
             }, true)
     }
 
     function deleteNextNodes(curr) {
-        document.getElementById('xxx').innerText = '';
+        // document.getElementById('xxx').innerText = '';
         // var removeIndex = nodesData.findIndex(node=>node.id == curr.id)
         // nodesData.splice(removeIndex,1)
         // nodes.splice(removeIndex,1)

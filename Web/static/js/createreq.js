@@ -26,3 +26,9 @@ function goToStudyRoute() {
     // 跳转到新的URL（GET请求）
     window.location.href = newUrl;
 }
+
+
+function goToQA() {
+    newUrl = "/qa/ques_ans"
+    window.location.href = newUrl;
+}

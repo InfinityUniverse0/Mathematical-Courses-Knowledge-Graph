@@ -6,7 +6,9 @@ urlpatterns = [
     path('study_route/', views.turn_study_route),
     path('info_query/post1', views.query_course),
     path('info_query/post2', views.query_vague),
+    path('info_query/post3', views.query_course_one),
     path('study_route/post1', views.learn_path),
     path('courses_overview/', views.courses_overview),
+    path('courses_overview/details', views.get_course_knowledge),
 ]
 

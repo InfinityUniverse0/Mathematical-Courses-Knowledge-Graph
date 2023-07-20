@@ -67,7 +67,7 @@ def paths_to_list(cursor_path):
     path_list, node_list = [], []
     cursor = cursor_path
     for p in cursor:
-        if p['p'] is None:
+        if p['p'] is None or p['r'] is None:
             continue
         path, relation = p['p'], p['r']
         start_node, end_node = path.start_node, path.end_node

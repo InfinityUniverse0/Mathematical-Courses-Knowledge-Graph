@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta maximum-scale=1.0, user-scalable=0>
+    <title>数学知识图谱展示</title>
+    <style>
+        /* CSS样式 */
+        @import "/static/css/option.css";
+
+        @font-face {
+            font-family: 'myfont';
+            src: url("/static/fonts/fonts2.woff2")format("woff2"),
+                url("/static/fonts/glyphicons-halflings-regular.woff")format("woff");
+            font-weight: 400;
+            font-display: auto;
+            font-style: normal;
+        }
+
+        /* 用于功能选择菜单的样式构建 */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #E8E8E8;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to bottom right, rgba(0, 187, 255, 0.57), #d618f3);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            overflow: hidden;
+        }
+
+        #graphContainer {
+            border-radius: 5px;
+            width: 800px;
+            height: 650px;
+            margin: 16px auto;
+            border: 0px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.4);
+            position: absolute;
+            right: 20px;
+            top: 100px;
+            text-align: center;
+        }
+
+        /*调整输入框的样式*/
+        #entityRecognition {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 50px;
+        }
+
+        /*调整输入框的样式*/
+        #relationExtraction {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 100px;
+        }
+
+        /*调整输入框的样式*/
+        #ask {
+            margin: 10px auto;
+            width: 800px;
+            /*text-align: left;*/
+            position: absolute;
+            left: 20px;
+            top: 150px;
+        }
+
+        /*学习路线规划按钮*/
+        #studyRoute {
+            margin: 10px auto;
+            position: absolute;
+            left: 170px;
+            top: 200px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+            padding: 8px;
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<script src="{% static 'js/graph.js' %}" data-nodes="{{ search.nodes }}" data-links="{{search.links}}"></script>
+
+<body>
+    <div class="container">
+        <div class="info-bar">
+            <button id="toggleBtn" onclick=displayBar()>&#9776 </button>
+            <span class="cssFont_1" style="font-family:'myfont', cursive">Mathematic Knowledge Graph</span>
+            <span class="demo" style="font-family:'myfont', cursive"> DEMO</span>
+        </div>
+        <ul class="button-bar" id="navbar">
+            <!-- 课程信息查询(精确查询)  数学知识查询(模糊匹配)          -->
+            <li class="content" onclick="goToQuery()">&#10148 信息查询</li>
+
+
+            <li onclick="goToStudyRoute()">&#1421 学习路线</li>
+            <li onclick="goToQuestionAnswer()">&#9729 数学猫娘问答</li>
+            <li onclick="goToCoursesOverview()">&#10050 课程总览</li>
+        </ul>
+        <form id="hidden_form" action="details" method="POST">
+            <input type="hidden" id="updateInput" name="name" value=""></input>
+            <button type="submit" id="updateBtn">查询详细信息</button>
+        </form>
+        <script>
+            var nodes1;
+            var links1;
+            var data_nodes;
+            var data_links;
+            // 获取上面的form表单
+            const form = document.getElementById('hidden_form');
+            // 获取上面的input输入框
+            const input = document.getElementById('updateInput');
+            // 获取上面的button按钮
+            const button = document.getElementById('updateBtn');
+            // 给form表单添加点击事件
+            form.addEventListener('submit', function (e) {
+                //阻止默认提交事件
+                e.preventDefault()
+                //获取输入框的值
+                const inputValue = input.value.trim();
+                post = 'details'
+                // 发送异步POST请求
+                sendRequest(post, inputValue)
+            });
+        </script>
+
+        <button id="all_course">查询全部课程</button>
+    </div>
+    <div id="graphContainer">
+        知识图谱
+        <!--知识图谱展示部分-->
+        <svg width="800" height="600"></svg>
+    </div>
+    <!--    用于显示结点详细内容的框-->
+    <div
+        style="width:300px;height:450px;border:1px solid gray;position:absolute;top:300px;left:230px;background-color: rgba(255,255,255,0.4);text-align:center;">
+        这里是展示的框
+        <span id="xxx"></span>
+        <div>课程名</div>
+        <div>课程简介</div>
+        <div>参考书籍</div>
+    </div>
+
+    <script></script>
+    <!--<script-->
+    <!-- <script>setRawData()</script> -->
+    <script src="http://d3js.org/d3.v5.min.js"></script>
+    <script src="/static/js/toggle.js"></script>
+    <script src="/static/js/createreq.js"></script>
+    <script src="/static/js/graph.js"></script>
+    <script src="{% static 'js/graph1.js' %}" data-nodes="{{ overview.nodes }}"
+        data-links="{{overview.links}}"></script>
+
+</body>
+
+
+</html>
