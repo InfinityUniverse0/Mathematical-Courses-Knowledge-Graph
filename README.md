@@ -1,5 +1,9 @@
 # Mathematical-Courses-Knowledge-Graph
 
+<p align="center">
+    <img src="https://img.shields.io/badge/License-GPL--3.0-yellow" alt="License">
+</p>
+
 ## 项目名称
 
 高等教育数学课程体系知识图谱
